@@ -1,5 +1,5 @@
 
-#  AuthentiHire is an  AI-Powered Interview Integrity Platform
+#  AuthentiHire 
 
 AuthentiHire is an **AI-driven interview integrity and analytics platform** designed to ensure fairness, transparency, and authenticity in virtual interviews. It leverages **computer vision, audio processing, and deep learning** to detect suspicious behavior, deepfakes, and integrity violations during online interviews.
 
