@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Candidate Portal - Join Meeting</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-blue: #2563eb;
+  --secondary-blue: #1e40af;
+  --accent-blue: #3b82f6;
+  --light-bg: #f8fafc;
+  --white: #ffffff;
+  --text-dark: #1e293b;
+  --text-gray: #475569;
+  --text-light: #64748b;
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  color: var(--text-dark);
+  background-color: var(--light-bg);
+  transition: background-color 0.3s ease;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body.dark-mode {
+  --light-bg: #0f172a;
+  --white: #1e293b;
+  --text-dark: #f1f5f9;
+  --text-gray: #cbd5e1;
+  --text-light: #94a3b8;
+  --border-color: #334155;
+}
+
+/* ===== Navbar ===== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 5%;
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.navbar.scrolled {
+  padding: 0.875rem 5%;
+  box-shadow: var(--shadow-md);
+}
+
+.left-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  letter-spacing: -0.025em;
+}
+
+.hamburger {
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--primary-blue);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-color);
+  background: transparent;
+}
+
+.hamburger:hover {
+  background: var(--light-bg);
+  transform: scale(1.05);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-links > button {
+  padding: 0.625rem 1.25rem;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-gray);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.nav-links > button:hover {
+  background: var(--light-bg);
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+}
+
+/* Dropdown */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  padding: 0.625rem 1.25rem;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-gray);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.dropbtn:hover {
+  background: var(--light-bg);
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  background: var(--white);
+  min-width: 180px;
+  box-shadow: var(--shadow-lg);
+  border-radius: 0.5rem;
+  z-index: 1;
+  margin-top: 0.5rem;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.dropdown-content a {
+  color: var(--text-gray);
+  padding: 0.75rem 1.25rem;
+  text-decoration: none;
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.dropdown-content a:hover {
+  background: var(--light-bg);
+  color: var(--primary-blue);
+}
+
+.dropdown-content.show {
+  display: block;
+}
+
+.toggle-btn {
+  padding: 0.625rem 1.25rem;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-gray);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+  background: var(--light-bg);
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100%;
+  background: var(--white);
+  transition: all 0.3s ease;
+  padding-top: 5rem;
+  box-shadow: var(--shadow-xl);
+  z-index: 999;
+  border-right: 1px solid var(--border-color);
+}
+
+.sidebar.active {
+  left: 0;
+}
+
+.sidebar a {
+  display: block;
+  color: var(--text-gray);
+  padding: 1rem 1.5rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+}
+
+.sidebar a:hover {
+  background: var(--light-bg);
+  color: var(--primary-blue);
+  border-left-color: var(--primary-blue);
+}
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+  display: none;
+  transition: opacity 0.3s ease;
+}
+
+.overlay.active {
+  display: block;
+}
+
+/* ===== Container ===== */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5rem 2rem;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease forwards;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.container.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+p.description {
+  font-size: 1.125rem;
+  color: var(--text-gray);
+  margin-bottom: 2.5rem;
+  max-width: 600px;
+}
+
+/* Join Form */
+.join-form {
+  background: var(--white);
+  padding: 2.5rem;
+  border-radius: 1rem;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: 0.9375rem;
+}
+
+.join-form input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-color);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  color: var(--text-dark);
+  background: var(--light-bg);
+  transition: all 0.2s ease;
+}
+
+.join-form input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.join-form input::placeholder {
+  color: var(--text-light);
+}
+
+.join-form button {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: 0.625rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--primary-blue);
+  color: white;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+  margin-top: 0.5rem;
+}
+
+.join-form button:hover {
+  background: var(--secondary-blue);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links {
+    gap: 0.5rem;
+  }
+
+  .navbar {
+    padding: 1rem 3%;
+    flex-wrap: wrap;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  p.description {
+    font-size: 1rem;
+  }
+
+  .join-form {
+    padding: 1.75rem;
+  }
+
+  .sidebar {
+    width: 260px;
+    left: -260px;
+  }
+}
+
+@media (max-width: 500px) {
+  .container {
+    padding: 3rem 1rem;
+  }
+
+  .join-form {
+    padding: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  .left-nav {
+    gap: 0.5rem;
+  }
+
+  .logo {
+    font-size: 1.25rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Overlay ===== -->
+<div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
+
+<!-- ===== Sidebar ===== -->
+<div id="sidebar" class="sidebar">
+  <a href="#">Live Monitoring</a>
+  <a href="#">Session History</a>
+  <a href="/view-gaze">Analytics</a>
+  <a href="#">Settings</a>
+</div>
+
+<!-- ===== Navbar ===== -->
+<header class="navbar">
+  <div class="left-nav">
+    <div class="hamburger" onclick="toggleSidebar()">☰</div>
+    <div class="logo">AuthentiHire</div>
+  </div>
+  <div class="nav-links">
+    <button onclick="window.location.href='/'">Home</button>
+    <div class="dropdown">
+      <button class="dropbtn">Profile ▾</button>
+      <div class="dropdown-content">
+        <a href="{{ url_for('profile') }}">View Profile</a>
+        <a href="{{ url_for('edit_profile') }}">Edit Profile</a>
+        <a href="{{ url_for('candidate_logout') }}">Logout</a>
+      </div>
+    </div>
+    <button class="toggle-btn" id="toggleBtn">🌙 Dark Mode</button>
+  </div>
+</header>
+
+<!-- ===== Main Content ===== -->
+<div class="container" id="joinContainer">
+  <h1>Join Your Meeting</h1>
+  <p class="description">Enter the Meeting ID and Password provided by the host to join the session.</p>
+  <form class="join-form" onsubmit="joinMeeting(event)">
+    <div class="form-group">
+      <label for="meetingID">Meeting ID</label>
+      <input type="text" id="meetingID" placeholder="Enter 9-digit Meeting ID" required>
+    </div>
+    <div class="form-group">
+      <label for="meetingPassword">Password</label>
+      <input type="text" id="meetingPassword" placeholder="Enter meeting password" required>
+    </div>
+    <button type="submit">Join Meeting</button>
+  </form>
+</div>
+
+<script>
+// ===== Sidebar Toggle =====
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+  sidebar.classList.toggle("active");
+  overlay.classList.toggle("active");
+}
+
+// ===== Profile Dropdown Toggle =====
+const dropbtn = document.querySelector('.dropbtn');
+const dropdownContent = document.querySelector('.dropdown-content');
+
+dropbtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  dropdownContent.classList.toggle('show');
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.dropdown')) {
+    dropdownContent.classList.remove('show');
+  }
+});
+
+// ===== Dark Mode Toggle =====
+const toggleBtn = document.getElementById('toggleBtn');
+toggleBtn.addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+  toggleBtn.textContent = document.body.classList.contains('dark-mode') ? '☀ Light Mode' : '🌙 Dark Mode';
+  localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+});
+
+window.onload = () => {
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark-mode');
+    toggleBtn.textContent = '☀ Light Mode';
+  }
+  setTimeout(() => document.getElementById('joinContainer').classList.add('show'), 100);
+};
+
+// Navbar scroll effect
+const navbar = document.querySelector(".navbar");
+window.addEventListener("scroll", () => {
+  if (window.scrollY > 60) {
+    navbar.classList.add("scrolled");
+  } else {
+    navbar.classList.remove("scrolled");
+  }
+});
+
+// ===== Join Meeting Function =====
+function joinMeeting(e) {
+  e.preventDefault();
+  const id = document.getElementById('meetingID').value.trim();
+  const pass = document.getElementById('meetingPassword').value.trim();
+
+  fetch("/validate-meeting", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id, password: pass })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      window.location.href = `/meeting/${id}?role=candidate`;
+    } else {
+      alert("Invalid Meeting ID or Password!");
+    }
+  })
+  .catch(err => {
+    console.error("Error validating meeting:", err);
+    alert("Failed to validate meeting. Please try again.");
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Profile | AuthentiHire</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0b0c10;
+      --bg-secondary: #1f2833;
+      --bg-card: rgba(31, 40, 51, 0.8);
+      --text-primary: #fff;
+      --text-secondary: #c5c6c7;
+      --accent-primary: #1db1bc;
+      --accent-secondary: #3e46b0;
+      --accent-gradient: linear-gradient(135deg, #1db1bc, #3e46b0);
+      --border-color: rgba(29, 177, 188, 0.3);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      --shadow-hover: 0 12px 48px rgba(29, 177, 188, 0.4);
+    }
+
+    body.light-mode {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #e2e8f0;
+      --bg-card: rgba(255, 255, 255, 0.9);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --border-color: rgba(29, 177, 188, 0.3);
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 8px 32px rgba(29, 177, 188, 0.3);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      transition: all 0.3s ease;
+    }
+
+    /* ========== NAVBAR ========== */
+    .navbar {
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--border-color);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .logo:hover {
+      transform: scale(1.05);
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--text-primary);
+      background: rgba(29, 177, 188, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .toggle-btn {
+      background: var(--accent-gradient);
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 25px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(29, 177, 188, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .toggle-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(29, 177, 188, 0.5);
+    }
+
+    /* ========== MAIN CONTENT ========== */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: fadeInDown 0.6s ease;
+    }
+
+    .page-header h1 {
+      font-size: 2.5rem;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .page-header p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+
+    /* ========== FORM CARD ========== */
+    .form-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border: 2px solid var(--border-color);
+      border-radius: 20px;
+      padding: 3rem;
+      box-shadow: var(--shadow);
+      transition: all 0.3s;
+      animation: fadeInUp 0.6s ease;
+    }
+
+    .form-card:hover {
+      border-color: var(--accent-primary);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .form-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .form-header i {
+      font-size: 2rem;
+      color: var(--accent-primary);
+    }
+
+    .form-header h2 {
+      font-size: 1.8rem;
+      color: var(--accent-primary);
+      font-weight: 600;
+    }
+
+    /* ========== FORM ELEMENTS ========== */
+    .form-group {
+      margin-bottom: 2rem;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .form-group label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-primary);
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      font-size: 1rem;
+    }
+
+    .form-group label i {
+      color: var(--accent-primary);
+      font-size: 1.2rem;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent-primary);
+      font-size: 1.2rem;
+      pointer-events: none;
+      transition: all 0.3s;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 1rem 1rem 1rem 3.5rem;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      background: rgba(29, 177, 188, 0.05);
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s;
+      outline: none;
+    }
+
+    .form-group input:focus {
+      border-color: var(--accent-primary);
+      background: rgba(29, 177, 188, 0.1);
+      box-shadow: 0 0 0 4px rgba(29, 177, 188, 0.1);
+    }
+
+    .form-group input:focus + .input-icon {
+      color: var(--accent-primary);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .form-group input::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.6;
+    }
+
+    .input-hint {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    .input-hint i {
+      font-size: 0.9rem;
+    }
+
+    /* ========== BUTTONS ========== */
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2.5rem;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--accent-gradient);
+      color: white;
+      box-shadow: 0 4px 15px rgba(29, 177, 188, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(29, 177, 188, 0.6);
+    }
+
+    .btn-primary:active {
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 2px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(29, 177, 188, 0.1);
+      border-color: var(--accent-primary);
+      transform: translateY(-3px);
+    }
+
+    /* ========== INFO BOX ========== */
+    .info-box {
+      background: rgba(29, 177, 188, 0.1);
+      border-left: 4px solid var(--accent-primary);
+      padding: 1.2rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: start;
+      gap: 1rem;
+    }
+
+    .info-box i {
+      font-size: 1.5rem;
+      color: var(--accent-primary);
+      margin-top: 0.2rem;
+    }
+
+    .info-box-content h4 {
+      color: var(--accent-primary);
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .info-box-content p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    /* ========== SUCCESS MESSAGE ========== */
+    .success-message {
+      background: rgba(16, 185, 129, 0.1);
+      border: 2px solid var(--success);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      display: none;
+      align-items: center;
+      gap: 1rem;
+      animation: slideIn 0.3s ease;
+    }
+
+    .success-message.show {
+      display: flex;
+    }
+
+    .success-message i {
+      font-size: 1.5rem;
+      color: var(--success);
+    }
+
+    .success-message-content {
+      flex: 1;
+    }
+
+    .success-message-content h4 {
+      color: var(--success);
+      margin-bottom: 0.3rem;
+      font-size: 1rem;
+    }
+
+    .success-message-content p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    /* ========== LOADING STATE ========== */
+    .btn-loading {
+      opacity: 0.7;
+      pointer-events: none;
+      position: relative;
+    }
+
+    .btn-loading::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      left: 50%;
+      margin-left: -8px;
+      margin-top: -8px;
+      border: 2px solid transparent;
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ========== ANIMATIONS ========== */
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .nav-links {
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+      }
+
+      .page-header h1 {
+        font-size: 2rem;
+        flex-direction: column;
+      }
+
+      .form-card {
+        padding: 2rem 1.5rem;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar">
+    <div class="logo">
+      <i class="fas fa-shield-alt"></i> AuthentiHire
+    </div>
+    <ul class="nav-links">
+      <li><a href="{{ url_for('home') }}"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="{{ url_for('about') }}"><i class="fas fa-info-circle"></i> About</a></li>
+      <li><a href="{{ url_for('contact') }}"><i class="fas fa-envelope"></i> Contact</a></li>
+      <li><a href="{{ url_for('profile') }}"><i class="fas fa-user"></i> Profile</a></li>
+    </ul>
+    <button class="toggle-btn" onclick="toggleMode()" aria-label="Toggle Theme">
+      <i class="fas fa-moon"></i> <span id="themeText">Dark Mode</span>
+    </button>
+  </nav>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>
+        <i class="fas fa-user-edit"></i>
+        Edit Your Profile
+      </h1>
+      <p>Update your account information and preferences</p>
+    </div>
+
+    <!-- Success Message (Hidden by default) -->
+    <div class="success-message" id="successMessage">
+      <i class="fas fa-check-circle"></i>
+      <div class="success-message-content">
+        <h4>Profile Updated Successfully!</h4>
+        <p>Your changes have been saved.</p>
+      </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="form-card">
+      <div class="form-header">
+        <i class="fas fa-id-card"></i>
+        <h2>Account Information</h2>
+      </div>
+
+      <!-- Info Box -->
+      <div class="info-box">
+        <i class="fas fa-info-circle"></i>
+        <div class="info-box-content">
+          <h4>Update Your Details</h4>
+          <p>Keep your profile information up to date. Changes will be reflected across all your interviews and meetings.</p>
+        </div>
+      </div>
+
+      <!-- Edit Form -->
+      <form method="POST" action="{{ url_for('edit_profile') }}" id="editForm">
+        <!-- Full Name -->
+        <div class="form-group">
+          <label for="name">
+            <i class="fas fa-user"></i>
+            Full Name
+          </label>
+          <div class="input-wrapper">
+            <input 
+              type="text" 
+              id="name" 
+              name="name" 
+              value="{{ user.name }}" 
+              placeholder="Enter your full name"
+              required
+              minlength="2"
+            >
+          </div>
+          <div class="input-hint">
+            <i class="fas fa-lightbulb"></i>
+            <span>Your name as it will appear in interviews</span>
+          </div>
+        </div>
+
+        <!-- Email Address -->
+        <div class="form-group">
+          <label for="email">
+            <i class="fas fa-envelope"></i>
+            Email Address
+          </label>
+          <div class="input-wrapper">
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              value="{{ user.email }}" 
+              placeholder="your.email@example.com"
+              required
+            >
+          </div>
+          <div class="input-hint">
+            <i class="fas fa-lightbulb"></i>
+            <span>We'll send meeting invitations to this email</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="saveBtn">
+            <i class="fas fa-save"></i>
+            <span>Save Changes</span>
+          </button>
+          <a href="{{ url_for('profile') }}" class="btn btn-secondary">
+            <i class="fas fa-times"></i>
+            Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script>
+    // Theme Toggle
+    function toggleMode() {
+      document.body.classList.toggle("light-mode");
+      const btn = document.querySelector(".toggle-btn i");
+      const text = document.getElementById("themeText");
+      
+      if (document.body.classList.contains("light-mode")) {
+        btn.className = "fas fa-sun";
+        text.textContent = "Light Mode";
+        localStorage.setItem("theme", "light");
+      } else {
+        btn.className = "fas fa-moon";
+        text.textContent = "Dark Mode";
+        localStorage.setItem("theme", "dark");
+      }
+    }
+
+    // Load saved theme
+    window.onload = () => {
+      if (localStorage.getItem("theme") === "light") {
+        document.body.classList.add("light-mode");
+        document.querySelector(".toggle-btn i").className = "fas fa-sun";
+        document.getElementById("themeText").textContent = "Light Mode";
+      }
+    };
+
+    // Form submission with loading state
+    const form = document.getElementById('editForm');
+    const saveBtn = document.getElementById('saveBtn');
+    const successMessage = document.getElementById('successMessage');
+
+    form.addEventListener('submit', function(e) {
+      // Add loading state
+      saveBtn.classList.add('btn-loading');
+      saveBtn.querySelector('span').textContent = 'Saving...';
+      
+      // Note: Form will submit normally via POST
+      // The loading state and success message will be handled by page reload
+    });
+
+    // Check if there's a success parameter in URL (you can add this to your Flask route)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true') {
+      successMessage.classList.add('show');
+      setTimeout(() => {
+        successMessage.classList.remove('show');
+      }, 5000);
+    }
+
+    // Form validation feedback
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+
+    function validateInput(input) {
+      if (input.validity.valid) {
+        input.style.borderColor = 'var(--success)';
+      } else {
+        input.style.borderColor = 'var(--danger)';
+      }
+    }
+
+    nameInput.addEventListener('blur', () => validateInput(nameInput));
+    emailInput.addEventListener('blur', () => validateInput(emailInput));
+
+    nameInput.addEventListener('input', () => {
+      if (nameInput.value.length > 0) {
+        nameInput.style.borderColor = 'var(--border-color)';
+      }
+    });
+
+    emailInput.addEventListener('input', () => {
+      if (emailInput.value.length > 0) {
+        emailInput.style.borderColor = 'var(--border-color)';
+      }
+    });
+  </script>
+</body>
+</html>

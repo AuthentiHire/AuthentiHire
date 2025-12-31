@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete Analytics | AuthentiHire</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+
+:root {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-card: rgba(255,255,255,0.05);
+    --text-primary: #fff;
+    --text-secondary: #94a3b8;
+    --accent-primary: #38bdf8;
+    --accent-hover: #0ea5e9;
+    --border-color: rgba(56, 189, 248, 0.3);
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+}
+
+[data-theme="light"] {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #e2e8f0;
+    --bg-card: rgba(255,255,255,0.9);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --accent-primary: #0ea5e9;
+    --accent-hover: #0284c7;
+    --border-color: rgba(14, 165, 233, 0.3);
+}
+
+body { 
+    font-family: 'Poppins', sans-serif; 
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    color: var(--text-primary); 
+    min-height: 100vh;
+    transition: all 0.3s ease;
+}
+
+/* ========== NAVBAR ========== */
+.navbar {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: none;
+    transition: transform 0.3s;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+}
+
+.nav-links a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-links a:hover {
+    color: var(--accent-primary);
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.theme-toggle {
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover {
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    transform: translateY(-2px);
+}
+
+.profile-dropdown {
+    position: relative;
+}
+
+.profile-btn {
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.profile-btn:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    min-width: 200px;
+    display: none;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+.dropdown-menu.active {
+    display: flex;
+}
+
+.dropdown-menu a {
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 1rem 1.5rem;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.dropdown-menu a:hover {
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+}
+
+/* ========== MAIN CONTENT ========== */
+.container {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+    animation: fadeInDown 0.6s ease;
+}
+
+.header h1 {
+    color: var(--accent-primary);
+    font-size: 2.8rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+}
+
+.header p {
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+}
+
+.search-box {
+    max-width: 700px;
+    margin: 0 auto 3rem;
+    display: flex;
+    gap: 0.75rem;
+    animation: fadeInUp 0.6s ease;
+}
+
+.search-box input {
+    flex: 1;
+    padding: 1.2rem 1.5rem;
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+}
+
+.search-box input::placeholder { 
+    color: var(--text-secondary); 
+}
+
+.search-box button {
+    padding: 1.2rem 3rem;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+}
+
+.search-box button:hover { 
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(56, 189, 248, 0.5);
+}
+
+.dashboard {
+    display: none;
+    animation: fadeIn 0.8s ease;
+}
+
+.section-title {
+    color: var(--accent-primary);
+    font-size: 2.2rem;
+    margin: 3rem 0 1.5rem 0;
+    text-align: center;
+    border-bottom: 3px solid var(--border-color);
+    padding-bottom: 1rem;
+    font-weight: 700;
+    animation: slideInLeft 0.6s ease;
+}
+
+/* ========== STATS CARDS ========== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.stat-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--border-color);
+    border-radius: 18px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--accent-primary), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: var(--accent-primary);
+    box-shadow: 0 15px 40px rgba(56, 189, 248, 0.3);
+}
+
+.stat-card:hover::before {
+    opacity: 0.1;
+}
+
+.stat-card h3 {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.stat-card .value {
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0.5rem 0;
+}
+
+.stat-card .sub-text {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+/* ========== CHARTS ========== */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.chart-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--border-color);
+    border-radius: 18px;
+    padding: 2rem;
+    transition: all 0.3s;
+}
+
+.chart-card:hover {
+    border-color: var(--accent-primary);
+    box-shadow: 0 10px 30px rgba(56, 189, 248, 0.2);
+}
+
+.chart-card h2 {
+    color: var(--accent-primary);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* ========== USERS SECTION ========== */
+.users-section {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--border-color);
+    border-radius: 18px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+}
+
+.users-section h2 {
+    color: var(--accent-primary);
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.user-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s;
+}
+
+.user-card:hover {
+    border-color: var(--accent-primary);
+    transform: translateX(8px);
+    box-shadow: 0 5px 20px rgba(56, 189, 248, 0.2);
+}
+
+.user-card h3 {
+    color: var(--accent-primary);
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.user-stats {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+    flex-wrap: wrap;
+}
+
+.user-stats span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.feature-item {
+    background: var(--bg-card);
+    padding: 1rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    border-left: 4px solid var(--accent-primary);
+    transition: all 0.3s;
+}
+
+.feature-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(56, 189, 248, 0.2);
+}
+
+/* ========== TIMELINE ========== */
+.timeline-section {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--border-color);
+    border-radius: 18px;
+    padding: 2rem;
+    max-height: 700px;
+    overflow-y: auto;
+}
+
+.timeline-section h2 {
+    color: var(--accent-primary);
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.timeline-item {
+    background: var(--bg-card);
+    border-left: 4px solid var(--accent-primary);
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.timeline-item:hover {
+    background: rgba(56, 189, 248, 0.1);
+    transform: translateX(8px);
+}
+
+.timeline-item .time {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.timeline-item .content {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* ========== UTILITIES ========== */
+.loading {
+    text-align: center;
+    padding: 4rem;
+    color: var(--text-secondary);
+    font-size: 1.3rem;
+    display: none;
+}
+
+.no-data {
+    text-align: center;
+    padding: 4rem;
+    color: var(--text-secondary);
+    font-size: 1.3rem;
+}
+
+.divider {
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+    margin: 3rem 0;
+    opacity: 0.5;
+}
+
+/* ========== SCROLLBAR ========== */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent-primary);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-hover);
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .navbar-left {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .search-box {
+        flex-direction: column;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- ========== NAVBAR ========== -->
+<nav class="navbar">
+    <div class="navbar-left">
+        <a href="/" class="logo">
+            <i class="fas fa-shield-alt"></i> AuthentiHire
+        </a>
+        <ul class="nav-links">
+            <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="/about"><i class="fas fa-info-circle"></i> About</a></li>
+            <li><a href="/contact"><i class="fas fa-envelope"></i> Contact</a></li>
+        </ul>
+    </div>
+    
+    <div class="navbar-right">
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">
+            <i class="fas fa-moon"></i>
+        </button>
+        
+        <div class="profile-dropdown">
+            <button class="profile-btn" onclick="toggleDropdown()">
+                <i class="fas fa-user-circle"></i>
+                <span>Profile</span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <a href="/profile"><i class="fas fa-user"></i> My Profile</a>
+                <a href="/edit-profile"><i class="fas fa-edit"></i> Edit Profile</a>
+                <a href="/candidate-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ========== MAIN CONTENT ========== -->
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-chart-line"></i> Complete Meeting Analytics</h1>
+        <p>AI Detection, Gaze Tracking & Performance Metrics</p>
+        <div class="search-box">
+            <input type="text" id="meetingIdInput" placeholder="Enter Meeting ID" />
+            <button onclick="loadAllAnalytics()">
+                <i class="fas fa-search"></i> Load Analytics
+            </button>
+        </div>
+    </div>
+
+    <div class="loading" id="loading">
+        <i class="fas fa-spinner fa-spin"></i> Loading analytics...
+    </div>
+
+    <div class="dashboard" id="dashboard">
+        
+        <!-- ========== GAZE ANALYTICS SECTION ========== -->
+        <h2 class="section-title">
+            <i class="fas fa-eye"></i> Gaze Detection Analytics
+        </h2>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3><i class="fas fa-crosshairs"></i> Total Gaze Events</h3>
+                <div class="value" id="gazeEvents">0</div>
+                <div class="sub-text">Tracked movements</div>
+            </div>
+            <div class="stat-card">
+                <h3><i class="fas fa-bullseye"></i> Average Focus</h3>
+                <div class="value" id="avgFocus">0%</div>
+                <div class="sub-text">Attention score</div>
+            </div>
+            <div class="stat-card">
+                <h3><i class="fas fa-users"></i> Users Tracked</h3>
+                <div class="value" id="gazeUsers">0</div>
+                <div class="sub-text">Participants</div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h2><i class="fas fa-compass"></i> Gaze Direction Distribution</h2>
+                <canvas id="gazeDirectionChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h2><i class="fas fa-chart-bar"></i> User Focus Scores</h2>
+                <canvas id="focusChart"></canvas>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- ========== AI DETECTION ANALYTICS SECTION ========== -->
+        <h2 class="section-title">
+            <i class="fas fa-robot"></i> AI Detection Analytics
+        </h2>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3><i class="fas fa-search"></i> Total Checks</h3>
+                <div class="value" id="totalChecks">0</div>
+                <div class="sub-text">AI detections</div>
+            </div>
+            <div class="stat-card">
+                <h3><i class="fas fa-check-circle"></i> Pass</h3>
+                <div class="value" id="totalPass" style="color: #10b981;">0</div>
+                <div class="sub-text">Successful checks</div>
+            </div>
+            <div class="stat-card">
+                <h3><i class="fas fa-exclamation-triangle"></i> Warning</h3>
+                <div class="value" id="totalWarning" style="color: #f59e0b;">0</div>
+                <div class="sub-text">Flagged issues</div>
+            </div>
+            <div class="stat-card">
+                <h3><i class="fas fa-times-circle"></i> Fail</h3>
+                <div class="value" id="totalFail" style="color: #ef4444;">0</div>
+                <div class="sub-text">Failed checks</div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h2><i class="fas fa-tasks"></i> Detection Results by Feature</h2>
+                <canvas id="featuresChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h2><i class="fas fa-pie-chart"></i> Overall Status Distribution</h2>
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- ========== COMBINED USER ANALYSIS ========== -->
+        <div class="users-section">
+            <h2><i class="fas fa-user-friends"></i> Complete User Analysis (Gaze + AI Detections)</h2>
+            <div id="usersList"></div>
+        </div>
+
+        <!-- ========== TIMELINE ========== -->
+        <div class="timeline-section">
+            <h2><i class="fas fa-clock"></i> All Events Timeline</h2>
+            <div id="timeline"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+let charts = {};
+
+// Theme toggle
+function toggleTheme() {
+    const body = document.body;
+    const themeToggle = document.getElementById('themeToggle');
+    
+    if (body.getAttribute('data-theme') === 'light') {
+        body.removeAttribute('data-theme');
+        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        body.setAttribute('data-theme', 'light');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        localStorage.setItem('theme', 'light');
+    }
+}
+
+// Load saved theme
+window.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        document.body.setAttribute('data-theme', 'light');
+        document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun"></i>';
+    }
+});
+
+// Dropdown toggle
+function toggleDropdown() {
+    document.getElementById('dropdownMenu').classList.toggle('active');
+}
+
+// Close dropdown when clicking outside
+window.addEventListener('click', (e) => {
+    if (!e.target.closest('.profile-dropdown')) {
+        document.getElementById('dropdownMenu').classList.remove('active');
+    }
+});
+
+async function loadAllAnalytics() {
+    const meetingId = document.getElementById("meetingIdInput").value.trim();
+    if (!meetingId) {
+        alert("⚠️ Please enter a meeting ID");
+        return;
+    }
+    
+    document.getElementById("loading").style.display = "block";
+    document.getElementById("dashboard").style.display = "none";
+    
+    try {
+        console.log(`🔍 Fetching data for meeting: ${meetingId}`);
+        
+        // Fetch ALL data sources at once
+        const [gazeRes, aiRes, gazeEventsRes, gazeDirectionRes] = await Promise.all([
+            fetch(`/api/gaze_summary/${meetingId}`),
+            fetch(`/api/ai_detection_analytics/${meetingId}`),
+            fetch(`/api/gaze_events/${meetingId}?limit=1000`),
+            fetch(`/api/gaze_direction_distribution/${meetingId}`)
+        ]);
+        
+        const gazeData = await gazeRes.json();
+        const aiData = await aiRes.json();
+        const gazeEventsData = await gazeEventsRes.json();
+        const gazeDirectionData = await gazeDirectionRes.json();
+        
+        console.log("📊 Gaze Summary:", gazeData);
+        console.log("📊 Gaze Events:", gazeEventsData);
+        console.log("📊 Gaze Direction:", gazeDirectionData);
+        console.log("📊 AI Data:", aiData);
+        
+        // Check what data we have
+        const hasGazeSummary = gazeData.status === "success" && gazeData.summary && gazeData.summary.length > 0;
+        const hasGazeEvents = gazeEventsData.status === "success" && gazeEventsData.events && gazeEventsData.events.length > 0;
+        const hasAIData = aiData.status === "success";
+        
+        console.log("✅ Has Gaze Summary:", hasGazeSummary);
+        console.log("✅ Has Gaze Events:", hasGazeEvents);
+        console.log("✅ Has AI Data:", hasAIData);
+        
+        if (!hasGazeSummary && !hasGazeEvents && !hasAIData) {
+            alert(`❌ No data found for meeting ID: ${meetingId}\n\nPlease check:\n- Meeting ID is correct\n- Meeting has been conducted\n- Data has been recorded`);
+            document.getElementById("loading").style.display = "none";
+            return;
+        }
+        
+        // ===== GAZE ANALYTICS (with fallback) =====
+        renderGazeAnalytics(gazeData, gazeEventsData, gazeDirectionData, meetingId);
+        
+        // ===== AI DETECTION ANALYTICS =====
+        if (hasAIData) {
+            renderAIAnalytics(aiData);
+        }
+        
+        // ===== COMBINED USER ANALYSIS =====
+        renderCombinedUsers(gazeData, aiData, gazeEventsData);
+        
+        // ===== COMBINED TIMELINE =====
+        renderCombinedTimeline(gazeData, aiData, gazeEventsData, meetingId);
+        
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+        
+    } catch (err) {
+        console.error("❌ Error loading analytics:", err);
+        alert(`❌ Error loading analytics:\n${err.message}\n\nCheck console for details.`);
+        document.getElementById("loading").style.display = "none";
+    }
+}
+
+function renderGazeAnalytics(gazeData, gazeEventsData, gazeDirectionData, meetingId) {
+    let totalEvents = 0;
+    let totalFocus = 0;
+    let userCount = 0;
+    
+    // Try summary first
+    const hasSummary = gazeData.status === "success" && gazeData.summary && gazeData.summary.length > 0;
+    const hasEvents = gazeEventsData.status === "success" && gazeEventsData.events && gazeEventsData.events.length > 0;
+    
+    if (hasSummary) {
+        console.log("✅ Using gaze_summary data");
+        gazeData.summary.forEach(u => {
+            totalEvents += u.total_events || 0;
+            totalFocus += u.focus_percentage || 0;
+        });
+        userCount = gazeData.summary.length;
+    } else if (hasEvents) {
+        console.log("✅ Calculating from raw gaze_data events");
+        totalEvents = gazeEventsData.events.length;
+        
+        const userEvents = {};
+        gazeEventsData.events.forEach(e => {
+            if (!userEvents[e.user_id]) {
+                userEvents[e.user_id] = { total: 0, focused: 0 };
+            }
+            userEvents[e.user_id].total++;
+            if (e.direction.toLowerCase() === 'center' || e.direction.toLowerCase() !== 'away') {
+                userEvents[e.user_id].focused++;
+            }
+        });
+        
+        userCount = Object.keys(userEvents).length;
+        Object.values(userEvents).forEach(stats => {
+            const userFocus = (stats.focused / stats.total) * 100;
+            totalFocus += userFocus;
+        });
+    } else {
+        console.log("⚠️ No gaze data available");
+    }
+    
+    const avgFocus = userCount > 0 ? (totalFocus / userCount).toFixed(1) : 0;
+    
+    console.log(`📊 Stats: Events=${totalEvents}, Focus=${avgFocus}%, Users=${userCount}`);
+    
+    document.getElementById("gazeEvents").textContent = totalEvents;
+    document.getElementById("avgFocus").textContent = avgFocus + "%";
+    document.getElementById("gazeUsers").textContent = userCount;
+    
+    if (gazeDirectionData.status === "success" && gazeDirectionData.percentages) {
+        console.log("✅ Using direction distribution from API");
+        renderGazeDirectionChart(gazeDirectionData.percentages);
+    } else if (hasEvents) {
+        console.log("✅ Calculating direction distribution from events");
+        const directionCounts = {};
+        gazeEventsData.events.forEach(e => {
+            const dir = e.direction;
+            directionCounts[dir] = (directionCounts[dir] || 0) + 1;
+        });
+        
+        const total = gazeEventsData.events.length;
+        const percentages = {};
+        Object.keys(directionCounts).forEach(dir => {
+            percentages[dir] = parseFloat(((directionCounts[dir] / total) * 100).toFixed(2));
+        });
+        
+        renderGazeDirectionChart(percentages);
+    } else {
+        console.log("⚠️ No direction data available");
+        renderGazeDirectionChart({ "No Data": 100 });
+    }
+    
+    if (hasSummary) {
+        renderFocusChart(gazeData.summary);
+    } else if (hasEvents) {
+        const userEvents = {};
+        gazeEventsData.events.forEach(e => {
+            if (!userEvents[e.user_id]) {
+                userEvents[e.user_id] = { total: 0, focused: 0 };
+            }
+            userEvents[e.user_id].total++;
+            if (e.direction.toLowerCase() === 'center' || e.direction.toLowerCase() !== 'away') {
+                userEvents[e.user_id].focused++;
+            }
+        });
+        
+        const summary = Object.keys(userEvents).map(userId => ({
+            user_id: userId,
+            focus_percentage: ((userEvents[userId].focused / userEvents[userId].total) * 100).toFixed(2),
+            total_events: userEvents[userId].total
+        }));
+        
+        renderFocusChart(summary);
+    } else {
+        renderFocusChart([]);
+    }
+}
+
+function renderGazeDirectionChart(percentages) {
+    const ctx = document.getElementById("gazeDirectionChart").getContext("2d");
+    if (charts.gazeDirection) charts.gazeDirection.destroy();
+    
+    const labels = Object.keys(percentages);
+    const data = Object.values(percentages);
+    
+    charts.gazeDirection = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: ["#22d3ee", "#a855f7", "#f97316", "#84cc16", "#3b82f6", "#ec4899"],
+                borderWidth: 2,
+                borderColor: getComputedStyle(document.body).getPropertyValue('--bg-primary')
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { 
+                legend: { 
+                    labels: { color: getComputedStyle(document.body).getPropertyValue('--text-primary') }, 
+                    position: "bottom" 
+                },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ctx.label + ": " + ctx.parsed.toFixed(2) + "%"
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderFocusChart(summary) {
+    const ctx = document.getElementById("focusChart").getContext("2d");
+    if (charts.focus) charts.focus.destroy();
+    
+    if (!summary || summary.length === 0) {
+        ctx.font = "16px Poppins";
+        ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text-secondary');
+        ctx.textAlign = "center";
+        ctx.fillText("No user focus data available", ctx.canvas.width / 2, ctx.canvas.height / 2);
+        return;
+    }
+    
+    const users = summary.map(u => u.user_id);
+    const focusData = summary.map(u => parseFloat(u.focus_percentage));
+    
+    const colors = focusData.map(f => 
+        f >= 80 ? "#10b981" : f >= 50 ? "#f59e0b" : "#ef4444"
+    );
+    
+    charts.focus = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: users,
+            datasets: [{
+                label: "Focus %",
+                data: focusData,
+                backgroundColor: colors,
+                borderRadius: 8,
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { 
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => "Focus: " + ctx.parsed.y.toFixed(1) + "%"
+                    }
+                }
+            },
+            scales: {
+                x: { 
+                    ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary') }, 
+                    grid: { color: "rgba(148,163,184,0.1)" } 
+                },
+                y: { 
+                    ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary') }, 
+                    grid: { color: "rgba(148,163,184,0.1)" },
+                    max: 100,
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function renderAIAnalytics(aiData) {
+    document.getElementById("totalChecks").textContent = aiData.total_checks || 0;
+    document.getElementById("totalPass").textContent = aiData.total_pass || 0;
+    document.getElementById("totalWarning").textContent = aiData.total_warning || 0;
+    document.getElementById("totalFail").textContent = aiData.total_fail || 0;
+    
+    renderFeaturesChart(aiData.features_summary);
+    renderStatusChart(aiData.total_pass, aiData.total_warning, aiData.total_fail);
+}
+
+function renderFeaturesChart(features) {
+    const ctx = document.getElementById("featuresChart").getContext("2d");
+    if (charts.features) charts.features.destroy();
+    
+    const featureNames = {
+        'deepfake': 'Deepfake', 'liveness': 'Liveness',
+        'multiperson': 'Multi-Person', 'face_match': 'Face Match',
+        'bias': 'Bias', 'audio_clarity': 'Audio', 'hand_raise': 'Hand Raise'
+    };
+    
+    const labels = Object.keys(features).map(f => featureNames[f] || f);
+    const passData = Object.values(features).map(f => f.pass);
+    const warnData = Object.values(features).map(f => f.warning);
+    const failData = Object.values(features).map(f => f.fail);
+    
+    charts.features = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [
+                { label: "✅ Pass", data: passData, backgroundColor: "#10b981", borderRadius: 6 },
+                { label: "⚠️ Warning", data: warnData, backgroundColor: "#f59e0b", borderRadius: 6 },
+                { label: "❌ Fail", data: failData, backgroundColor: "#ef4444", borderRadius: 6 }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { 
+                legend: { 
+                    labels: { color: getComputedStyle(document.body).getPropertyValue('--text-primary') }, 
+                    position: "top" 
+                } 
+            },
+            scales: {
+                x: { 
+                    ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary') }, 
+                    grid: { color: "rgba(148,163,184,0.1)" } 
+                },
+                y: { 
+                    ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary') }, 
+                    grid: { color: "rgba(148,163,184,0.1)" } 
+                }
+            }
+        }
+    });
+}
+
+function renderStatusChart(totalPass, totalWarning, totalFail) {
+    const ctx = document.getElementById("statusChart").getContext("2d");
+    if (charts.status) charts.status.destroy();
+    
+    charts.status = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+            labels: ["✅ Pass", "⚠️ Warning", "❌ Fail"],
+            datasets: [{
+                data: [totalPass, totalWarning, totalFail],
+                backgroundColor: ["#10b981", "#f59e0b", "#ef4444"],
+                borderWidth: 2,
+                borderColor: getComputedStyle(document.body).getPropertyValue('--bg-primary')
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { 
+                legend: { 
+                    labels: { color: getComputedStyle(document.body).getPropertyValue('--text-primary') }, 
+                    position: "bottom" 
+                } 
+            }
+        }
+    });
+}
+
+function renderCombinedUsers(gazeData, aiData, gazeEventsData) {
+    const container = document.getElementById("usersList");
+    container.innerHTML = "";
+    
+    const allUsers = new Set();
+    
+    if (gazeData.status === "success" && gazeData.summary) {
+        gazeData.summary.forEach(u => allUsers.add(u.user_id));
+    }
+    if (gazeEventsData.status === "success" && gazeEventsData.events) {
+        gazeEventsData.events.forEach(e => allUsers.add(e.user_id));
+    }
+    if (aiData.status === "success" && aiData.user_summary) {
+        Object.keys(aiData.user_summary).forEach(u => allUsers.add(u));
+    }
+    
+    if (allUsers.size === 0) {
+        container.innerHTML = '<p class="no-data"><i class="fas fa-info-circle"></i> No user data available</p>';
+        return;
+    }
+    
+    allUsers.forEach(userId => {
+        const gazeInfo = gazeData.summary ? gazeData.summary.find(u => u.user_id === userId) : null;
+        const aiInfo = aiData.user_summary ? aiData.user_summary[userId] : null;
+        
+        const card = document.createElement("div");
+        card.className = "user-card";
+        
+        let html = `<h3><i class="fas fa-user"></i> ${userId}</h3><div class="user-stats">`;
+        
+        if (gazeInfo) {
+            html += `
+                <span><i class="fas fa-eye"></i> <strong>${gazeInfo.focus_percentage}%</strong> focus</span>
+                <span><i class="fas fa-chart-line"></i> <strong>${gazeInfo.total_events}</strong> gaze events</span>
+            `;
+        }
+        
+        if (aiInfo) {
+            html += `
+                <span><i class="fas fa-search"></i> <strong>${aiInfo.total_checks}</strong> AI checks</span>
+                <span style="color: #10b981;"><i class="fas fa-check-circle"></i> <strong>${aiInfo.pass_count}</strong></span>
+                <span style="color: #f59e0b;"><i class="fas fa-exclamation-triangle"></i> <strong>${aiInfo.warning_count}</strong></span>
+                <span style="color: #ef4444;"><i class="fas fa-times-circle"></i> <strong>${aiInfo.fail_count}</strong></span>
+            `;
+        }
+        
+        html += `</div>`;
+        
+        if (aiInfo && aiInfo.features) {
+            html += `<div class="feature-grid">`;
+            Object.entries(aiInfo.features).forEach(([feat, status]) => {
+                const names = {
+                    'deepfake': 'Deepfake', 'liveness': 'Liveness',
+                    'multiperson': 'Multi-Person', 'face_match': 'Face Match',
+                    'bias': 'Bias', 'audio_clarity': 'Audio', 'hand_raise': 'Hand Raise'
+                };
+                html += `<div class="feature-item"><strong>${names[feat] || feat}:</strong> ${status}</div>`;
+            });
+            html += `</div>`;
+        }
+        
+        card.innerHTML = html;
+        container.appendChild(card);
+    });
+}
+
+function renderCombinedTimeline(gazeData, aiData, gazeEventsData, meetingId) {
+    const container = document.getElementById("timeline");
+    container.innerHTML = "";
+    
+    const timeline = [];
+    
+    if (aiData.status === "success" && aiData.timeline) {
+        aiData.timeline.forEach(event => {
+            timeline.push({
+                time: new Date(event.time),
+                type: "ai",
+                user: event.user,
+                feature: event.feature,
+                status: event.status
+            });
+        });
+    }
+    
+    if (gazeEventsData.status === "success" && gazeEventsData.events) {
+        gazeEventsData.events.forEach(event => {
+            timeline.push({
+                time: new Date(event.timestamp),
+                type: "gaze",
+                user: event.user_id,
+                direction: event.direction
+            });
+        });
+    }
+    
+    if (timeline.length === 0) {
+        container.innerHTML = '<p class="no-data"><i class="fas fa-info-circle"></i> No timeline events available</p>';
+        return;
+    }
+    
+    timeline.sort((a, b) => b.time - a.time);
+    
+    timeline.slice(0, 100).forEach(event => {
+        const item = document.createElement("div");
+        item.className = "timeline-item";
+        
+        if (event.type === "ai") {
+            const names = {
+                'deepfake': 'Deepfake', 'liveness': 'Liveness',
+                'multiperson': 'Multi-Person', 'face_match': 'Face Match',
+                'bias': 'Bias', 'audio_clarity': 'Audio', 'hand_raise': 'Hand Raise'
+            };
+            item.innerHTML = `
+                <div class="time"><i class="fas fa-clock"></i> ${event.time.toLocaleString()}</div>
+                <div class="content">
+                    <strong style="color: var(--accent-primary);">${event.user}</strong> › 
+                    <i class="fas fa-robot"></i> ${names[event.feature] || event.feature}: ${event.status}
+                </div>
+            `;
+        } else if (event.type === "gaze") {
+            item.innerHTML = `
+                <div class="time"><i class="fas fa-clock"></i> ${event.time.toLocaleString()}</div>
+                <div class="content">
+                    <strong style="color: var(--accent-primary);">${event.user}</strong> › 
+                    <i class="fas fa-eye"></i> Gaze: ${event.direction}
+                </div>
+            `;
+        }
+        
+        container.appendChild(item);
+    });
+}
+</script>
+
+</body>
+</html>

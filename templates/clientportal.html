@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Portal - Host Meeting</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-blue: #2563eb;
+  --secondary-blue: #1e40af;
+  --accent-blue: #3b82f6;
+  --light-bg: #f8fafc;
+  --white: #ffffff;
+  --text-dark: #1e293b;
+  --text-gray: #475569;
+  --text-light: #64748b;
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  color: var(--text-dark);
+  background-color: var(--light-bg);
+  transition: background-color 0.3s ease;
+  min-height: 100vh;
+}
+
+body.dark-mode {
+  --light-bg: #0f172a;
+  --white: #1e293b;
+  --text-dark: #f1f5f9;
+  --text-gray: #cbd5e1;
+  --text-light: #94a3b8;
+  --border-color: #334155;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 5%;
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.navbar.scrolled {
+  padding: 0.875rem 5%;
+  box-shadow: var(--shadow-md);
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  letter-spacing: -0.025em;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-links > button {
+  padding: 0.625rem 1.25rem;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-gray);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.nav-links > button:hover {
+  background: var(--light-bg);
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+}
+
+/* Dropdown */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  padding: 0.625rem 1.25rem;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-gray);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.dropbtn:hover {
+  background: var(--light-bg);
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  background: var(--white);
+  min-width: 180px;
+  box-shadow: var(--shadow-lg);
+  border-radius: 0.5rem;
+  z-index: 1;
+  margin-top: 0.5rem;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.dropdown-content a {
+  color: var(--text-gray);
+  padding: 0.75rem 1.25rem;
+  text-decoration: none;
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.dropdown-content a:hover {
+  background: var(--light-bg);
+  color: var(--primary-blue);
+}
+
+
+
+.dropdown-content.show {
+  display: block;
+}
+
+
+.toggle-btn {
+  padding: 0.625rem 1.25rem;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-gray);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+  background: var(--light-bg);
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+}
+
+/* Container */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5rem 2rem;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease forwards;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.container.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+p.description {
+  font-size: 1.125rem;
+  color: var(--text-gray);
+  margin-bottom: 2.5rem;
+  max-width: 600px;
+}
+
+/* Host Button */
+.host-btn {
+  padding: 1rem 2.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.625rem;
+  cursor: pointer;
+  color: white;
+  background: var(--primary-blue);
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.host-btn:hover {
+  background: var(--secondary-blue);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Meeting Info Card */
+.meeting-info {
+  background: var(--white);
+  padding: 2.5rem;
+  border-radius: 1rem;
+  text-align: left;
+  width: 100%;
+  max-width: 500px;
+  display: none;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  margin-top: 2.5rem;
+  transition: all 0.3s ease;
+}
+
+.meeting-info h2 {
+  text-align: center;
+  color: var(--text-dark);
+  margin-bottom: 2rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 1rem;
+  letter-spacing: -0.015em;
+}
+
+.meeting-info-item {
+  margin: 1.25rem 0;
+}
+
+.meeting-info-item label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+  font-size: 0.9375rem;
+}
+
+.info-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.meeting-info-item span {
+  flex: 1;
+  padding: 0.875rem 1rem;
+  background: var(--light-bg);
+  border-radius: 0.5rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  word-break: break-all;
+  border: 1px solid var(--border-color);
+  font-family: 'Courier New', monospace;
+  font-size: 0.95rem;
+}
+
+.meeting-info-item input {
+  flex: 1;
+  padding: 0.875rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-color);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  color: var(--text-dark);
+  background: var(--light-bg);
+  transition: all 0.2s ease;
+}
+
+.meeting-info-item input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.copy-btn {
+  padding: 0.875rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  background: var(--primary-blue);
+  color: white;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  font-weight: 500;
+  font-size: 0.875rem;
+  min-width: 70px;
+}
+
+.copy-btn:hover {
+  background: var(--secondary-blue);
+  transform: translateY(-1px);
+}
+
+.set-btn {
+  padding: 0.875rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  background: var(--text-gray);
+  color: white;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  font-weight: 500;
+  font-size: 0.875rem;
+  min-width: 70px;
+}
+
+.set-btn:hover {
+  background: var(--text-dark);
+  transform: translateY(-1px);
+}
+
+.start-btn {
+  display: block;
+  width: 100%;
+  margin-top: 2rem;
+  padding: 1rem;
+  border-radius: 0.625rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  background: var(--primary-blue);
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.start-btn:hover {
+  background: var(--secondary-blue);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-links {
+    gap: 0.5rem;
+  }
+
+  .navbar {
+    padding: 1rem 3%;
+    flex-wrap: wrap;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  p.description {
+    font-size: 1rem;
+  }
+
+  .meeting-info {
+    padding: 1.75rem;
+  }
+
+  .info-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .copy-btn, .set-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 500px) {
+  .container {
+    padding: 3rem 1rem;
+  }
+
+  .meeting-info {
+    padding: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+}
+</style>
+</head>
+<body>
+<header class="navbar">
+  <div class="logo">AuthentiHire</div>
+  <div class="nav-links">
+    <button onclick="window.location.href='clientportal'">Home</button>
+    <div class="dropdown">
+      <button class="dropbtn">Profile ▾</button>
+      <div class="dropdown-content">
+        <a href="{{ url_for('profile') }}">View Profile</a>
+        <a href="{{ url_for('edit_profile') }}">Edit Profile</a>
+        <a href="{{ url_for('candidate_logout') }}">Logout</a>
+      </div>
+    </div>
+    <button class="toggle-btn" id="toggleBtn">🌙 Dark Mode</button>
+  </div>
+</header>
+
+<div class="container" id="hostContainer">
+  <h1>Host Your Meeting</h1>
+  <p class="description">Create a unique Meeting ID and Password for participants to join securely.</p>
+  <button class="host-btn" onclick="createMeeting()">Create Meeting</button>
+
+  <div class="meeting-info" id="meetingInfo">
+    <h2>Meeting Details</h2>
+    
+    <div class="meeting-info-item">
+      <label>Meeting ID</label>
+      <div class="info-row">
+        <span id="meetingID"></span>
+        <button class="copy-btn" onclick="copyText('meetingID')">Copy</button>
+      </div>
+    </div>
+
+    <div class="meeting-info-item">
+      <label>Password</label>
+      <div class="info-row">
+        <span id="meetingPassword"></span>
+        <button class="copy-btn" onclick="copyText('meetingPassword')">Copy</button>
+      </div>
+    </div>
+
+    <div class="meeting-info-item">
+      <label>Custom Password (Optional)</label>
+      <div class="info-row">
+        <input type="text" id="customPassword" placeholder="Enter alphanumeric password">
+        <button class="set-btn" onclick="setCustomPassword()">Set</button>
+      </div>
+    </div>
+
+    <button class="start-btn" onclick="startMeeting()">Start Meeting</button>
+  </div>
+</div>
+\
+
+<script>
+// ===== Dark Mode Toggle =====
+
+const toggleBtn = document.getElementById('toggleBtn');
+toggleBtn.addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+  toggleBtn.textContent = document.body.classList.contains('dark-mode') ? '☀ Light Mode' : '🌙 Dark Mode';
+  localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+});
+
+window.onload = () => {
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark-mode');
+    toggleBtn.textContent = '☀ Light Mode';
+  }
+  setTimeout(() => document.getElementById('hostContainer').classList.add('show'), 100);
+};
+
+
+
+
+
+
+
+
+
+// Navbar scroll effect
+const navbar = document.querySelector(".navbar");
+window.addEventListener("scroll", () => {
+  if (window.scrollY > 60) {
+    navbar.classList.add("scrolled");
+  } else {
+    navbar.classList.remove("scrolled");
+  }
+});
+
+// ===== Meeting Functions =====
+function createMeeting() {
+  // Generate 9-digit Meeting ID
+  const meetingID = Math.floor(100000000 + Math.random() * 900000000);
+  
+  // Generate 8-character alphanumeric password
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let password = '';
+  for (let i = 0; i < 8; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  
+  document.getElementById('meetingID').textContent = meetingID;
+  document.getElementById('meetingPassword').textContent = password;
+  document.getElementById('meetingInfo').style.display = 'block';
+  document.getElementById('customPassword').value = '';
+}
+
+function copyText(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text);
+  alert(id === 'meetingID' ? 'Meeting ID copied!' : 'Password copied!');
+}
+
+function setCustomPassword() {
+  const custom = document.getElementById('customPassword').value.trim();
+  
+  // Validate alphanumeric only
+  const alphanumericRegex = /^[A-Za-z0-9]+$/;
+  
+  if (!custom) {
+    alert('Please enter a password!');
+    return;
+  }
+  
+  if (!alphanumericRegex.test(custom)) {
+    alert('Password must be alphanumeric only (letters and numbers)!');
+    return;
+  }
+  
+  document.getElementById('meetingPassword').textContent = custom;
+  alert('Custom password set successfully!');
+}
+
+function startMeeting() {
+  const meetingID = document.getElementById('meetingID').textContent;
+  const password = document.getElementById('meetingPassword').textContent;
+  
+  // Save meeting info to backend
+  fetch("/create-meeting", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: meetingID, password })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      // Redirect host to meeting page with role=host
+      window.location.href = `/meeting/${meetingID}?role=host`;
+    }
+  })
+  .catch(err => {
+    console.error("Error creating meeting:", err);
+    alert("Failed to create meeting. Please try again.");
+  });
+}
+</script>
+<script>
+const dropBtn = document.querySelector(".dropbtn");
+const dropdownContent = document.querySelector(".dropdown-content");
+
+dropBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  dropdownContent.classList.toggle("show");
+});
+
+// Close dropdown when clicking outside
+window.addEventListener("click", () => {
+  dropdownContent.classList.remove("show");
+});
+</script>
+
+</body>
+</html>

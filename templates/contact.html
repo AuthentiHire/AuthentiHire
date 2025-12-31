@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us - AuthentiHire</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-blue: #2563eb;
+      --secondary-blue: #1e40af;
+      --accent-blue: #3b82f6;
+      --light-bg: #f8fafc;
+      --white: #ffffff;
+      --text-dark: #1e293b;
+      --text-gray: #475569;
+      --text-light: #64748b;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: var(--text-dark);
+      background-color: var(--light-bg);
+      transition: background-color 0.3s ease;
+      min-height: 100vh;
+    }
+
+    body.dark-mode {
+      --light-bg: #0f172a;
+      --white: #1e293b;
+      --text-dark: #f1f5f9;
+      --text-gray: #cbd5e1;
+      --text-light: #94a3b8;
+      --border-color: #334155;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 5%;
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+      letter-spacing: -0.025em;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-gray);
+      font-weight: 500;
+      font-size: 0.9375rem;
+      transition: color 0.2s ease;
+      position: relative;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--primary-blue);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -0.25rem;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary-blue);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+      width: 100%;
+    }
+
+    .toggle-btn {
+      padding: 0.625rem 1.25rem;
+      border: 1px solid var(--border-color);
+      background: transparent;
+      color: var(--text-gray);
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+    }
+
+    .toggle-btn:hover {
+      background: var(--light-bg);
+      border-color: var(--primary-blue);
+      color: var(--primary-blue);
+    }
+
+    /* Contact Section */
+    .contact-section {
+      max-width: 700px;
+      margin: 6rem auto 4rem;
+      padding: 0 5%;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .contact-section h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.02em;
+      text-align: center;
+    }
+
+    .contact-section > p {
+      font-size: 1.125rem;
+      color: var(--text-gray);
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
+
+    /* Contact Form */
+    .contact-form {
+      background: var(--white);
+      padding: 2.5rem;
+      border-radius: 1rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      font-size: 0.9375rem;
+      font-family: inherit;
+      color: var(--text-dark);
+      background: var(--light-bg);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .contact-form textarea {
+      resize: vertical;
+      min-height: 140px;
+    }
+
+    .contact-form button {
+      width: 100%;
+      padding: 1rem;
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      border-radius: 0.625rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-md);
+    }
+
+    .contact-form button:hover {
+      background: var(--secondary-blue);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* Contact Info */
+    .contact-info {
+      margin-top: 2.5rem;
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 1rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      opacity: 0;
+      animation: fadeIn 0.6s ease 0.3s forwards;
+    }
+
+    .contact-info h3 {
+      font-size: 1.375rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 1rem;
+      letter-spacing: -0.015em;
+    }
+
+    .contact-info p {
+      font-size: 0.9375rem;
+      color: var(--text-gray);
+      margin: 0.75rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .contact-info a {
+      color: var(--primary-blue);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .contact-info a:hover {
+      color: var(--secondary-blue);
+      text-decoration: underline;
+    }
+
+    /* Social Links */
+    .social-links {
+      margin-top: 2.5rem;
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 1rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 0.5s forwards;
+    }
+
+    .social-links h3 {
+      font-size: 1.375rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 1.25rem;
+      letter-spacing: -0.015em;
+    }
+
+    .social-links-container {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .social-links a {
+      text-decoration: none;
+      color: var(--text-dark);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      padding: 0.625rem 1.25rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+      background: var(--light-bg);
+    }
+
+    .social-links a:hover {
+      background: var(--primary-blue);
+      color: white;
+      border-color: var(--primary-blue);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        gap: 1rem;
+      }
+
+      .navbar {
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .contact-section {
+        margin-top: 4rem;
+      }
+
+      .contact-section h2 {
+        font-size: 2rem;
+      }
+
+      .contact-section > p {
+        font-size: 1rem;
+      }
+
+      .contact-form {
+        padding: 1.75rem;
+      }
+
+      .contact-info,
+      .social-links {
+        padding: 1.5rem;
+      }
+
+      .social-links-container {
+        flex-direction: column;
+      }
+
+      .social-links a {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">AuthentiHire</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/contact" class="active">Contact</a></li>
+    </ul>
+    <button class="toggle-btn" onclick="toggleMode()" aria-label="Toggle Dark Mode">🌙 Dark Mode</button>
+  </header>
+
+  <!-- Contact Section -->
+  <section class="contact-section">
+    <h2>Contact Us</h2>
+    <p>We'd love to hear from you. Fill out the form below:</p>
+
+    <!-- Contact Form -->
+    <form class="contact-form">
+      <input type="text" name="name" placeholder="Your Name" required />
+      <input type="email" name="email" placeholder="Your Email" required />
+      <input type="text" name="subject" placeholder="Subject" required />
+      <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+
+    <!-- Direct Contact Info -->
+    <div class="contact-info">
+      <h3>Reach Us Directly</h3>
+      <p>📞 Phone: <a href="tel:+91123456789">+91 123456789</a></p>
+      <p>✉️ Email: <a href="mailto:authentichireweb@gmail.com">authentichireweb@gmail.com</a></p>
+    </div>
+
+    <!-- Social Links -->
+    <div class="social-links">
+      <h3>Follow Us</h3>
+      <div class="social-links-container">
+        <a href="#">🌐 Website</a>
+        <a href="#">🐦 X</a>
+        <a href="#">📸 Instagram</a>
+        <a href="#">💼 LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scripts -->
+  <script>
+    // Dark Mode Toggle
+    function toggleMode() {
+      document.body.classList.toggle("dark-mode");
+      const btn = document.querySelector(".toggle-btn");
+      if (document.body.classList.contains("dark-mode")) {
+        btn.textContent = "☀ Light Mode";
+        localStorage.setItem("theme", "dark");
+      } else {
+        btn.textContent = "🌙 Dark Mode";
+        localStorage.setItem("theme", "light");
+      }
+    }
+
+    // Load saved theme
+    window.onload = () => {
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark-mode");
+        document.querySelector(".toggle-btn").textContent = "☀ Light Mode";
+      }
+    };
+  </script>
+</body>
+</html>

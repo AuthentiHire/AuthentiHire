@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuthentiHire</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-blue: #2563eb;
+      --secondary-blue: #1e40af;
+      --accent-blue: #3b82f6;
+      --light-bg: #f8fafc;
+      --white: #ffffff;
+      --text-dark: #1e293b;
+      --text-gray: #475569;
+      --text-light: #64748b;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: var(--text-dark);
+      background-color: var(--light-bg);
+      transition: background-color 0.3s ease;
+    }
+
+    body.dark-mode {
+      --light-bg: #0f172a;
+      --white: #1e293b;
+      --text-dark: #f1f5f9;
+      --text-gray: #cbd5e1;
+      --text-light: #94a3b8;
+      --border-color: #334155;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 5%;
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .navbar.scrolled {
+      padding: 0.875rem 5%;
+      box-shadow: var(--shadow-md);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+      letter-spacing: -0.025em;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-gray);
+      font-weight: 500;
+      font-size: 0.9375rem;
+      transition: color 0.2s ease;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary-blue);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -0.25rem;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary-blue);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .toggle-btn {
+      padding: 0.625rem 1.25rem;
+      border: 1px solid var(--border-color);
+      background: transparent;
+      color: var(--text-gray);
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+    }
+
+    .toggle-btn:hover {
+      background: var(--light-bg);
+      border-color: var(--primary-blue);
+      color: var(--primary-blue);
+    }
+
+    /* Login Section */
+    .login-section {
+      position: relative;
+      text-align: center;
+      padding: 6rem 5% 5rem;
+      background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    body.dark-mode .login-section {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    #login-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .login-section h2,
+    .login-section p,
+    .login-buttons {
+      position: relative;
+      z-index: 2;
+    }
+
+    .login-section h2 {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .login-section p {
+      font-size: 1.125rem;
+      color: var(--text-gray);
+      margin-bottom: 2.5rem;
+      font-weight: 400;
+    }
+
+    .login-buttons {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.6s ease 0.2s forwards;
+    }
+
+    .login-buttons button {
+      padding: 1rem 2.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 0.625rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-md);
+    }
+
+    .login-buttons button:first-child {
+      background: var(--primary-blue);
+      color: white;
+    }
+
+    .login-buttons button:first-child:hover {
+      background: var(--secondary-blue);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .login-buttons button:last-child {
+      background: var(--white);
+      color: var(--primary-blue);
+      border: 2px solid var(--primary-blue);
+    }
+
+    .login-buttons button:last-child:hover {
+      background: var(--primary-blue);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* Features Section */
+    #features {
+      padding: 5rem 5%;
+      background: var(--white);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    #features h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    #features > p {
+      text-align: center;
+      font-size: 1.125rem;
+      color: var(--text-gray);
+      margin-bottom: 4rem;
+      max-width: 48rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .feature-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .card {
+      position: relative;
+      background: var(--white);
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 2rem;
+      transition: all 0.3s ease;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.1s; }
+    .card:nth-child(2) { animation-delay: 0.2s; }
+    .card:nth-child(3) { animation-delay: 0.3s; }
+    .card:nth-child(4) { animation-delay: 0.4s; }
+    .card:nth-child(5) { animation-delay: 0.5s; }
+    .card:nth-child(6) { animation-delay: 0.6s; }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--primary-blue);
+    }
+
+    .card-shine {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .card:hover .card-shine {
+      left: 100%;
+    }
+
+    .card-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+
+    .card h3 {
+      font-size: 1.375rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.015em;
+    }
+
+    .card p {
+      font-size: 0.9375rem;
+      color: var(--text-gray);
+      line-height: 1.6;
+    }
+
+    /* Review Section */
+    .review-section {
+      padding: 5rem 5%;
+      background: var(--light-bg);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .review-section h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .review-section > p {
+      text-align: center;
+      font-size: 1.125rem;
+      color: var(--text-gray);
+      margin-bottom: 3rem;
+    }
+
+    .review-form {
+      max-width: 600px;
+      margin: 0 auto 4rem;
+      background: var(--white);
+      padding: 2.5rem;
+      border-radius: 1rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
+    }
+
+    .review-form input,
+    .review-form textarea {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      margin-bottom: 1.25rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      font-size: 0.9375rem;
+      font-family: inherit;
+      color: var(--text-dark);
+      background: var(--light-bg);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .review-form input:focus,
+    .review-form textarea:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .review-form textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .review-form label {
+      display: block;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 0.75rem;
+      font-size: 0.9375rem;
+    }
+
+    .rating {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+    }
+
+    .rating span {
+      cursor: pointer;
+      color: #cbd5e1;
+      transition: all 0.2s ease;
+    }
+
+    .rating span:hover {
+      color: #fbbf24;
+      transform: scale(1.1);
+    }
+
+    .review-form button {
+      width: 100%;
+      padding: 1rem;
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      border-radius: 0.625rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-md);
+    }
+
+    .review-form button:hover {
+      background: var(--secondary-blue);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .reviews-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .review-card {
+      background: var(--white);
+      padding: 1.75rem;
+      border-radius: 0.875rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+    }
+
+    .review-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-4px);
+    }
+
+    .review-card h4 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 0.75rem;
+    }
+
+    .review-card p {
+      font-size: 0.9375rem;
+      color: var(--text-gray);
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+    }
+
+    .review-card p:last-child {
+      color: #fbbf24;
+      font-weight: 600;
+      margin-bottom: 0;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .show {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        gap: 1rem;
+      }
+
+      .navbar {
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .login-section h2 {
+        font-size: 2rem;
+      }
+
+      .login-section p {
+        font-size: 1rem;
+      }
+
+      .login-buttons {
+        flex-direction: column;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      .login-buttons button {
+        width: 100%;
+      }
+
+      #features h2,
+      .review-section h2 {
+        font-size: 2rem;
+      }
+
+      .feature-cards,
+      .reviews-container {
+        grid-template-columns: 1fr;
+      }
+
+      .review-form {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">AuthentiHire</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/contact">Contact</a></li>
+    </ul>
+    <button class="toggle-btn" onclick="toggleMode()" aria-label="Toggle Dark Mode">🌙 Dark Mode</button>
+  </header>
+
+  <!-- Login / Role Selection Section -->
+  <section class="login-section">
+    <canvas id="login-canvas"></canvas>
+    
+    <h2>Welcome to AuthentiHire</h2>
+    <p>Select your role to continue:</p>
+    <div class="login-buttons">
+      <button onclick="window.location.href='/clientsignup'">Client Portal</button>
+      <button onclick="window.location.href='/candidatesignup'">Candidate Portal</button>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features">
+    <h2>Features</h2>
+    <p>AuthentiHire uses advanced AI to verify identities, ensure fairness, and prevent fraud.</p>
+    <div class="feature-cards">
+      <div class="card deepfake">
+        <div class="card-shine"></div>
+        <div class="card-icon">🎭</div>
+        <h3>Deepfake Detection</h3>
+        <p>Detect AI-generated or altered video/audio in real time with advanced neural networks.</p>
+      </div>
+      <div class="card gaze">
+        <div class="card-shine"></div>
+        <div class="card-icon">👀</div>
+        <h3>Gaze Detection</h3>
+        <p>Track candidate's eye movement to detect focus or distractions during interviews.</p>
+      </div>
+      <div class="card multiperson">
+        <div class="card-shine"></div>
+        <div class="card-icon">🧑‍🤝‍🧑</div>
+        <h3>Multi-Person Detection</h3>
+        <p>Automatically flag when more than one person is detected in the frame.</p>
+      </div>
+      <div class="card liveness">
+        <div class="card-shine"></div>
+        <div class="card-icon">🔒</div>
+        <h3>Liveness Check</h3>
+        <p>Confirm a candidate is physically present and not spoofing the system.</p>
+      </div>
+      <div class="card analytics">
+        <div class="card-shine"></div>
+        <div class="card-icon">🧠</div>
+        <h3>AI Interview Analytics</h3>
+        <p>Analyze speech patterns, tone, and sentiment during live interviews.</p>
+      </div>
+      <div class="card bias">
+        <div class="card-shine"></div>
+        <div class="card-icon">🚀</div>
+        <h3>Bias Mitigation</h3>
+        <p>Ensure hiring fairness by detecting and reducing unconscious bias.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Review Section -->
+  <section class="review-section">
+    <h2>Leave a Review</h2>
+    <p>Help us improve:</p>
+    <form class="review-form">
+      <input type="text" id="name" placeholder="Your Name" required>
+      <input type="email" id="email" placeholder="Your Email" required>
+      <textarea id="review" placeholder="Write your review..." required></textarea>
+      <label>Your Rating:</label>
+      <div class="rating" id="rating">
+        <span data-value="1">☆</span>
+        <span data-value="2">☆</span>
+        <span data-value="3">☆</span>
+        <span data-value="4">☆</span>
+        <span data-value="5">☆</span>
+      </div>
+      <button type="submit">Submit Review</button>
+    </form>
+    <div class="reviews-container" id="reviews-container"></div>
+  </section>
+
+  <!-- Scripts -->
+  <script>
+    function toggleMode() {
+      document.body.classList.toggle("dark-mode");
+      const btn = document.querySelector(".toggle-btn");
+      if (document.body.classList.contains("dark-mode")) {
+        btn.textContent = "☀ Light Mode";
+        localStorage.setItem("theme", "dark");
+      } else {
+        btn.textContent = "🌙 Dark Mode";
+        localStorage.setItem("theme", "light");
+      }
+    }
+
+    window.onload = () => {
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark-mode");
+        document.querySelector(".toggle-btn").textContent = "☀ Light Mode";
+      }
+    };
+
+    // Review Star Rating  
+    const stars = document.querySelectorAll('.rating span');
+    let selectedRating = 0;
+
+    stars.forEach((star, idx) => {
+      star.addEventListener('mouseover', () => {
+        stars.forEach((s,i)=> s.textContent = i<=idx ? '★':'☆');
+      });
+      star.addEventListener('mouseout', () => {
+        stars.forEach((s,i)=> s.textContent = i<selectedRating ? '★':'☆');
+      });
+      star.addEventListener('click', () => {
+        selectedRating = idx+1;
+        stars.forEach((s,i)=> s.textContent = i<selectedRating ? '★':'☆');
+      });
+    });
+
+    // Handle review submission
+    const reviewForm = document.querySelector(".review-form");
+    const reviewsContainer = document.getElementById("reviews-container");
+    reviewForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const reviewText = document.getElementById("review").value;
+      if (!selectedRating) {
+        alert("Please select a rating!");
+        return;
+      }
+      const reviewCard = document.createElement("div");
+      reviewCard.classList.add("review-card");
+      reviewCard.innerHTML = `<h4>${name} (${email})</h4><p>${reviewText}</p><p>⭐ ${selectedRating}/5</p>`;
+      reviewsContainer.appendChild(reviewCard);
+      reviewForm.reset();
+      selectedRating = 0;
+      stars.forEach(s => s.textContent = "☆");
+    });
+    
+    // Scroll animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+        }
+      });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll('.login-section, #features, .review-section, .card, .login-buttons button')
+      .forEach(el => observer.observe(el));
+
+    // Navbar scroll shrink & glow effect
+    const navbar = document.querySelector(".navbar");
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 60) {
+        navbar.classList.add("scrolled");
+      } else {
+        navbar.classList.remove("scrolled");
+      }
+    });
+
+    // Background Animation for Login Section
+    const canvas = document.getElementById('login-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = canvas.parentElement.offsetWidth;
+      canvas.height = canvas.parentElement.offsetHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2.5 + 0.8;
+        this.speedX = Math.random() * 0.4 - 0.2;
+        this.speedY = Math.random() * 0.4 - 0.2;
+        this.opacity = Math.random() * 0.4 + 0.2;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x > canvas.width) this.x = 0;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.y > canvas.height) this.y = 0;
+        if (this.y < 0) this.y = canvas.height;
+      }
+
+      draw() {
+        ctx.fillStyle = `rgba(59, 130, 246, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        
+        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2.5);
+        gradient.addColorStop(0, `rgba(96, 165, 250, ${this.opacity * 0.3})`);
+        gradient.addColorStop(1, 'rgba(96, 165, 250, 0)');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    class FloatingOrb {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 50 + 30;
+        this.speedX = Math.random() * 0.25 - 0.125;
+        this.speedY = Math.random() * 0.25 - 0.125;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x > canvas.width + this.size) this.x = -this.size;
+        if (this.x < -this.size) this.x = canvas.width + this.size;
+        if (this.y > canvas.height + this.size) this.y = -this.size;
+        if (this.y < -this.size) this.y = canvas.height + this.size;
+      }
+
+      draw() {
+        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+        gradient.addColorStop(0, 'rgba(59, 130, 246, 0.08)');
+        gradient.addColorStop(0.5, 'rgba(96, 165, 250, 0.04)');
+        gradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    const particles = [];
+    for (let i = 0; i < 60; i++) {
+      particles.push(new Particle());
+    }
+
+    const orbs = [];
+    for (let i = 0; i < 4; i++) {
+      orbs.push(new FloatingOrb());
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      orbs.forEach(orb => {
+        orb.update();
+        orb.draw();
+      });
+      
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+      
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 100) {
+            ctx.strokeStyle = `rgba(59, 130, 246, ${0.12 * (1 - distance / 100)})`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>

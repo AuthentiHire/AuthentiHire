@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ user.name }}'s Profile | AuthentiHire</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0b0c10;
+      --bg-secondary: #1f2833;
+      --bg-card: rgba(31, 40, 51, 0.8);
+      --text-primary: #fff;
+      --text-secondary: #c5c6c7;
+      --accent-primary: #1db1bc;
+      --accent-secondary: #3e46b0;
+      --accent-gradient: linear-gradient(135deg, #1db1bc, #3e46b0);
+      --border-color: rgba(29, 177, 188, 0.3);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      --shadow-hover: 0 12px 48px rgba(29, 177, 188, 0.4);
+    }
+
+    body.light-mode {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #e2e8f0;
+      --bg-card: rgba(255, 255, 255, 0.9);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --border-color: rgba(29, 177, 188, 0.3);
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 8px 32px rgba(29, 177, 188, 0.3);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      transition: all 0.3s ease;
+    }
+
+    /* ========== NAVBAR ========== */
+    .navbar {
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--border-color);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .logo:hover {
+      transform: scale(1.05);
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--text-primary);
+      background: rgba(29, 177, 188, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .toggle-btn {
+      background: var(--accent-gradient);
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 25px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(29, 177, 188, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .toggle-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(29, 177, 188, 0.5);
+    }
+
+    /* ========== MAIN CONTENT ========== */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .profile-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: fadeInDown 0.6s ease;
+    }
+
+    .profile-header h1 {
+      font-size: 2.5rem;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+
+    .profile-header p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    /* CLIENT PROFILE CENTER FIX */
+.profile-grid.single-column {
+  display: flex;
+  justify-content: center;
+}
+
+/* Limit width so it looks premium */
+.profile-grid.single-column .profile-card {
+  max-width: 500px;
+  width: 100%;
+  animation: fadeInUp 0.6s ease;
+}
+
+
+    /* ========== PROFILE CARD ========== */
+    .profile-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border: 2px solid var(--border-color);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      transition: all 0.3s;
+      animation: fadeInLeft 0.6s ease;
+    }
+
+    .profile-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--accent-primary);
+    }
+
+    .profile-avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: var(--accent-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 4rem;
+      color: white;
+      box-shadow: 0 8px 24px rgba(29, 177, 188, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-avatar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .profile-avatar:hover::before {
+      left: 100%;
+    }
+
+    .profile-info {
+      text-align: center;
+    }
+
+    .profile-info h2 {
+      color: var(--accent-primary);
+      margin-bottom: 0.5rem;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    .profile-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent-gradient);
+      color: white;
+      padding: 0.4rem 1.2rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(29, 177, 188, 0.3);
+    }
+
+    .info-item {
+      background: rgba(29, 177, 188, 0.1);
+      border-left: 4px solid var(--accent-primary);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all 0.3s;
+    }
+
+    .info-item:hover {
+      background: rgba(29, 177, 188, 0.2);
+      transform: translateX(5px);
+    }
+
+    .info-item i {
+      font-size: 1.5rem;
+      color: var(--accent-primary);
+    }
+
+    .info-item-content {
+      flex: 1;
+    }
+
+    .info-item-label {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-item-value {
+      color: var(--text-primary);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-top: 0.2rem;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--accent-gradient);
+      color: white;
+      box-shadow: 0 4px 15px rgba(29, 177, 188, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(29, 177, 188, 0.5);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 2px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(29, 177, 188, 0.1);
+      border-color: var(--accent-primary);
+      transform: translateY(-3px);
+    }
+
+    /* ========== VIDEO VERIFICATION ========== */
+    .verification-section {
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border: 2px solid var(--border-color);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      animation: fadeInRight 0.6s ease;
+      transition: all 0.3s;
+    }
+
+    .verification-section:hover {
+      border-color: var(--accent-primary);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .section-header i {
+      font-size: 2rem;
+      color: var(--accent-primary);
+    }
+
+    .section-header h3 {
+      font-size: 1.8rem;
+      color: var(--accent-primary);
+      font-weight: 600;
+    }
+
+    .video-container {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .video-container video {
+      width: 100%;
+      height: auto;
+      display: block;
+      max-height: 500px;
+      object-fit: contain;
+    }
+
+    .video-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.8));
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .recording-indicator {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--danger);
+      font-weight: 600;
+      animation: pulse 1.5s infinite;
+    }
+
+    .recording-indicator.active {
+      display: flex;
+    }
+
+    .recording-dot {
+      width: 12px;
+      height: 12px;
+      background: var(--danger);
+      border-radius: 50%;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .record-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .record-buttons button {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .status-message {
+      background: rgba(29, 177, 188, 0.1);
+      border-left: 4px solid var(--accent-primary);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      display: none;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .status-message.show {
+      display: flex;
+      animation: slideIn 0.3s ease;
+    }
+
+    .status-message.success {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: var(--success);
+    }
+
+    .status-message i {
+      font-size: 1.5rem;
+      color: var(--accent-primary);
+    }
+
+    .status-message.success i {
+      color: var(--success);
+    }
+
+    /* ========== STATS CARDS ========== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.3s;
+      animation: fadeInUp 0.6s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-primary);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .stat-card i {
+      font-size: 2.5rem;
+      color: var(--accent-primary);
+      margin-bottom: 1rem;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ========== ANIMATIONS ========== */
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes fadeInRight {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 1024px) {
+      .profile-grid {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .verification-section {
+        max-width: 500px;
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .nav-links {
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+      }
+
+      .profile-header h1 {
+        font-size: 2rem;
+      }
+
+      .record-buttons {
+        flex-direction: column;
+      }
+
+      .record-buttons button {
+        min-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar">
+    <div class="logo">
+      <i class="fas fa-shield-alt"></i> AuthentiHire
+    </div>
+    <ul class="nav-links">
+      <li><a href="{{ url_for('home') }}"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="{{ url_for('about') }}"><i class="fas fa-info-circle"></i> About</a></li>
+      <li><a href="{{ url_for('contact') }}"><i class="fas fa-envelope"></i> Contact</a></li>
+      <li><a href="{{ url_for('profile') }}" class="active"><i class="fas fa-user"></i> Profile</a></li>
+    </ul>
+    <button class="toggle-btn" onclick="toggleMode()" aria-label="Toggle Theme">
+      <i class="fas fa-moon"></i> <span id="themeText">Dark Mode</span>
+    </button>
+  </nav>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <div class="container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <h1><i class="fas fa-user-circle"></i> Welcome, {{ user.name }}!</h1>
+      <p>Manage your account and verification settings</p>
+    </div>
+
+    <!-- Stats Cards (Optional - only for candidates) -->
+    {% if user_type == 'candidate' %}
+    <div class="stats-grid">
+      <div class="stat-card">
+        <i class="fas fa-video"></i>
+        <div class="stat-value">1</div>
+        <div class="stat-label">Video Verified</div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-calendar-check"></i>
+        <div class="stat-value">0</div>
+        <div class="stat-label">Interviews</div>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-shield-check"></i>
+        <div class="stat-value">Active</div>
+        <div class="stat-label">Account Status</div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Profile Grid -->
+   <div class="profile-grid {% if user_type == 'client' %}single-column{% endif %}">
+
+      <!-- Profile Information Card -->
+      <div class="profile-card">
+        <div class="profile-avatar">
+          <i class="fas fa-user"></i>
+        </div>
+        
+        <div class="profile-info">
+          <h2>{{ user.name }}</h2>
+          <div class="profile-badge">
+            <i class="fas fa-crown"></i>
+            {{ user_type|capitalize }}
+          </div>
+        </div>
+
+        <div class="info-item">
+          <i class="fas fa-user-tag"></i>
+          <div class="info-item-content">
+            <div class="info-item-label">Username</div>
+            <div class="info-item-value">{{ user.username }}</div>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <i class="fas fa-envelope"></i>
+          <div class="info-item-content">
+            <div class="info-item-label">Email Address</div>
+            <div class="info-item-value">{{ user.email }}</div>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <i class="fas fa-id-badge"></i>
+          <div class="info-item-content">
+            <div class="info-item-label">Account Type</div>
+            <div class="info-item-value">{{ user_type|capitalize }}</div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <a href="{{ url_for('edit_profile') }}" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Edit Profile
+          </a>
+          {% if user_type == 'candidate' %}
+          <a href="{{ url_for('candidate_logout') }}" class="btn btn-secondary">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+          {% else %}
+          <a href="{{ url_for('client_logout') }}" class="btn btn-secondary">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Video Verification Section -->
+      {% if user_type == 'candidate' %}
+      <div class="verification-section">
+        <div class="section-header">
+          <i class="fas fa-video"></i>
+          <div>
+            <h3>Video Verification</h3>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 0.5rem;">
+              Record a short video to verify your identity for interviews
+            </p>
+          </div>
+        </div>
+
+        <!-- Video Container -->
+        <div class="video-container">
+          <!-- Live Preview -->
+          <video id="preview" autoplay muted playsinline></video>
+          
+          <!-- Playback -->
+          <video id="playback" controls playsinline style="display:none;"></video>
+          
+          <!-- Recording Indicator -->
+          <div class="video-overlay">
+            <div class="recording-indicator" id="recordingIndicator">
+              <div class="recording-dot"></div>
+              <span>RECORDING</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="record-buttons">
+          <button id="startRecord" class="btn btn-primary">
+            <i class="fas fa-video"></i> Start Recording
+          </button>
+          <button id="stopRecord" class="btn btn-secondary" disabled>
+            <i class="fas fa-stop"></i> Stop Recording
+          </button>
+        </div>
+
+        <!-- Status Message -->
+        <div class="status-message" id="statusMessage">
+          <i class="fas fa-info-circle"></i>
+          <div>
+            <strong>Ready to record</strong>
+            <p style="margin: 0; font-size: 0.9rem; color: var(--text-secondary);">
+              Click "Start Recording" to begin your video verification
+            </p>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script>
+    // Theme Toggle
+    function toggleMode() {
+      document.body.classList.toggle("light-mode");
+      const btn = document.querySelector(".toggle-btn i");
+      const text = document.getElementById("themeText");
+      
+      if (document.body.classList.contains("light-mode")) {
+        btn.className = "fas fa-sun";
+        text.textContent = "Light Mode";
+        localStorage.setItem("theme", "light");
+      } else {
+        btn.className = "fas fa-moon";
+        text.textContent = "Dark Mode";
+        localStorage.setItem("theme", "dark");
+      }
+    }
+
+    // Load saved theme
+    window.onload = () => {
+      if (localStorage.getItem("theme") === "light") {
+        document.body.classList.add("light-mode");
+        document.querySelector(".toggle-btn i").className = "fas fa-sun";
+        document.getElementById("themeText").textContent = "Light Mode";
+      }
+    };
+
+    // Video Recording
+    const video = document.getElementById("preview");
+    const playback = document.getElementById("playback");
+    const startBtn = document.getElementById("startRecord");
+    const stopBtn = document.getElementById("stopRecord");
+    const recordingIndicator = document.getElementById("recordingIndicator");
+    const statusMessage = document.getElementById("statusMessage");
+    let mediaRecorder;
+    let recordedChunks = [];
+
+    function showStatus(message, isSuccess = false) {
+      statusMessage.innerHTML = `
+        <i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-info-circle'}"></i>
+        <div>
+          <strong>${isSuccess ? 'Success!' : 'Status'}</strong>
+          <p style="margin: 0; font-size: 0.9rem; color: var(--text-secondary);">
+            ${message}
+          </p>
+        </div>
+      `;
+      statusMessage.className = `status-message show ${isSuccess ? 'success' : ''}`;
+    }
+
+    startBtn?.addEventListener("click", async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { width: 1280, height: 720 }, 
+          audio: true 
+        });
+        
+        video.srcObject = stream;
+        video.style.display = "block";
+        playback.style.display = "none";
+
+        mediaRecorder = new MediaRecorder(stream, {
+          mimeType: 'video/webm;codecs=vp9'
+        });
+        recordedChunks = [];
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            recordedChunks.push(event.data);
+          }
+        };
+
+        mediaRecorder.onstop = async () => {
+          const blob = new Blob(recordedChunks, { type: "video/webm" });
+          const formData = new FormData();
+          formData.append("video", blob);
+
+          showStatus("Uploading your video...");
+
+          try {
+            const response = await fetch("/upload_video", {
+              method: "POST",
+              body: formData,
+            });
+            const result = await response.json();
+
+            if (result.path) {
+              showStatus(result.message || "Video uploaded successfully!", true);
+              playback.src = result.path;
+              playback.style.display = "block";
+              video.style.display = "none";
+            } else {
+              showStatus("Upload failed. Please try again.");
+            }
+          } catch (err) {
+            console.error("Upload error:", err);
+            showStatus("Network error. Please check your connection.");
+          }
+        };
+
+        mediaRecorder.start();
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        recordingIndicator.classList.add("active");
+        showStatus("Recording in progress...");
+
+      } catch (err) {
+        console.error("Camera/mic error:", err);
+        showStatus("Camera access denied. Please allow permissions.");
+      }
+    });
+
+    stopBtn?.addEventListener("click", () => {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+        video.srcObject.getTracks().forEach(track => track.stop());
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+        recordingIndicator.classList.remove("active");
+        showStatus("Processing your video...");
+      }
+    });
+
+    // Show initial status
+    if (statusMessage) {
+      statusMessage.classList.add("show");
+    }
+  </script>
+</body>
+</html>
