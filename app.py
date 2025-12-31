@@ -307,28 +307,29 @@ def view_results(meeting_id):
 def send_otp():
     data = request.get_json()
     email = data.get("email")
-    if not email: return jsonify({"success": False, "message": "Email required"}), 400
+    if not email:
+        return jsonify({"success": False, "message": "Email required"}), 400
 
     otp = str(random.randint(100000, 999999))
     otp_store[email] = otp
 
     try:
         sender_email = "authentichireweb@gmail.com"
-        sender_password = "vnsm viyq kudg ljvj"  # move to env var
+        sender_password = "vnsmviyqkudgljvj"
 
         subject = "AuthentiHire OTP"
         body = f"Your OTP is: {otp}"
         message = f"Subject: {subject}\n\n{body}"
 
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
-            server.starttls()
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=10) as server:
             server.login(sender_email, sender_password)
             server.sendmail(sender_email, email, message)
 
         return jsonify({"success": True, "message": "OTP sent successfully!"})
+
     except Exception as e:
         print("Email Error:", e)
-        return jsonify({"success": False, "message": "Failed to send OTP"}), 500
+        return jsonify({"success": False, "message": str(e)}), 500
 
 # -------------------- Signup/Login --------------------
 @app.route("/candidate-signup", methods=["POST"])
@@ -360,6 +361,22 @@ def candidate_login():
         session['username']=user[2]
         return jsonify({"success":True,"message":"Login successful"})
     return jsonify({"success":False,"message":"Invalid credentials"}),401
+# -------------------- Page Routes (GET) - Add these --------------------
+@app.route("/client-login-page")
+def client_login_page():
+    return render_template("clientlogin.html")
+
+@app.route("/client-signup-page")
+def client_signup_page():
+    return render_template("clientsignup.html")
+# -------------------- Candidate Page Routes (GET) --------------------
+@app.route("/candidate-login-page")
+def candidate_login_page():
+    return render_template("candidatelogin.html")
+
+@app.route("/candidate-signup-page")
+def candidate_signup_page():
+    return render_template("candidatesignup.html")
 
 @app.route("/client-signup", methods=["POST"])
 def client_signup():
@@ -402,17 +419,29 @@ def profile():
 
 @app.route("/edit-profile", methods=["GET","POST"])
 def edit_profile():
-    if 'user_type' not in session or 'user_email' not in session: return redirect(url_for('home'))
-    user_type,email=session['user_type'],session['user_email']
-    if request.method=="POST":
-        data=request.get_json() if request.is_json else request.form
-        new_name,new_email=data.get("name"),data.get("email")
-        if not new_name or not new_email: return jsonify({"success":False,"message":"Name & email required"}),400
-        success=update_candidate_profile(email,new_name,new_email) if user_type=='candidate' else update_client_profile(email,new_name,new_email)
-        if success: session['user_email']=new_email; return jsonify({"success":True,"message":"Profile updated"})
-        return jsonify({"success":False,"message":"Update failed"}),500
-    user=get_candidate_by_email(email) if user_type=='candidate' else get_client_by_email(email)
-    return render_template('edit_profile.html',user=user,user_type=user_type)
+    if 'user_type' not in session or 'user_email' not in session: 
+        return redirect(url_for('home'))
+    
+    user_type, email = session['user_type'], session['user_email']
+    
+    if request.method == "POST":
+        data = request.get_json() if request.is_json else request.form
+        new_name, new_email = data.get("name"), data.get("email")
+        
+        if not new_name or not new_email: 
+            return jsonify({"success": False, "message": "Name & email required"}), 400
+        
+        success = update_candidate_profile(email, new_name, new_email) if user_type == 'candidate' else update_client_profile(email, new_name, new_email)
+        
+        if success: 
+            session['user_email'] = new_email
+            # Redirect back to profile page
+            return redirect(url_for('profile'))
+        
+        return jsonify({"success": False, "message": "Update failed"}), 500
+    
+    user = get_candidate_by_email(email) if user_type == 'candidate' else get_client_by_email(email)
+    return render_template('edit_profile.html', user=user, user_type=user_type)
 
 @app.route("/candidate-logout", methods=["POST","GET"])
 def candidate_logout(): session.clear(); return redirect(url_for('home'))
@@ -1186,6 +1215,161 @@ def test_ai():
         test_results["db_error"] = str(e)
     
     return jsonify(test_results)
+# Add this debug route to your app.py to check what data exists
+
+@app.route("/debug/analytics/<meeting_id>")
+def debug_analytics(meeting_id):
+    """Debug route to see exactly what data exists for a meeting"""
+    
+    debug_info = {
+        "meeting_id": meeting_id,
+        "gaze_data": {},
+        "gaze_summary": {},
+        "ai_results": {},
+        "raw_counts": {}
+    }
+    
+    # Check gaze_data table
+    try:
+        with sqlite3.connect(DB_PATH) as conn:
+            c = conn.cursor()
+            
+            # Raw gaze events count
+            c.execute("SELECT COUNT(*) FROM gaze_data WHERE meeting_id=?", (meeting_id,))
+            debug_info["raw_counts"]["gaze_events"] = c.fetchone()[0]
+            
+            # Sample gaze events
+            c.execute("""
+                SELECT user_id, direction, timestamp 
+                FROM gaze_data 
+                WHERE meeting_id=? 
+                LIMIT 10
+            """, (meeting_id,))
+            debug_info["gaze_data"]["sample_events"] = [
+                {"user": r[0], "direction": r[1], "time": r[2]} 
+                for r in c.fetchall()
+            ]
+            
+            # Gaze summary
+            c.execute("""
+                SELECT user_id, total_events, focus_percentage, last_updated
+                FROM gaze_summary 
+                WHERE meeting_id=?
+            """, (meeting_id,))
+            debug_info["gaze_summary"]["users"] = [
+                {"user": r[0], "events": r[1], "focus": r[2], "updated": r[3]}
+                for r in c.fetchall()
+            ]
+            
+    except Exception as e:
+        debug_info["gaze_error"] = str(e)
+    
+    # Check ai_results table
+    try:
+        with sqlite3.connect(AI_DB_PATH) as conn:
+            c = conn.cursor()
+            
+            # AI results count
+            c.execute("SELECT COUNT(*) FROM ai_results WHERE meeting_id=?", (meeting_id,))
+            debug_info["raw_counts"]["ai_results"] = c.fetchone()[0]
+            
+            # Sample AI results
+            c.execute("""
+                SELECT user_id, feature, status, created_at 
+                FROM ai_results 
+                WHERE meeting_id=? 
+                LIMIT 10
+            """, (meeting_id,))
+            debug_info["ai_results"]["sample"] = [
+                {"user": r[0], "feature": r[1], "status": r[2], "time": r[3]}
+                for r in c.fetchall()
+            ]
+            
+            # Feature breakdown
+            c.execute("""
+                SELECT feature, COUNT(*) 
+                FROM ai_results 
+                WHERE meeting_id=?
+                GROUP BY feature
+            """, (meeting_id,))
+            debug_info["ai_results"]["by_feature"] = dict(c.fetchall())
+            
+    except Exception as e:
+        debug_info["ai_error"] = str(e)
+    
+    # Check if meeting exists in active meetings
+    debug_info["meeting_active"] = meeting_id in active_meetings
+    debug_info["meeting_rooms"] = meeting_id in meeting_rooms
+    
+    return jsonify(debug_info)
+
+
+# Add this route to generate test data
+@app.route("/generate_test_data/<meeting_id>")
+def generate_test_data(meeting_id):
+    """Generate fake data to test if analytics page works"""
+    
+    test_users = ["test_user_1", "test_user_2", "test_candidate_3"]
+    directions = ["Left", "Right", "Center", "Top", "Bottom", "away"]
+    
+    try:
+        # Generate gaze data
+        with sqlite3.connect(DB_PATH) as conn:
+            c = conn.cursor()
+            
+            for user in test_users:
+                # Insert 50 random gaze events per user
+                for i in range(50):
+                    direction = random.choice(directions)
+                    timestamp = (datetime.datetime.now() - datetime.timedelta(minutes=random.randint(0, 60))).isoformat()
+                    
+                    c.execute("""
+                        INSERT INTO gaze_data (meeting_id, user_id, direction, timestamp)
+                        VALUES (?, ?, ?, ?)
+                    """, (meeting_id, user, direction, timestamp))
+                
+                # Create summary
+                total_events = 50
+                away_events = random.randint(5, 15)
+                focus_percentage = ((total_events - away_events) / total_events) * 100
+                
+                c.execute("""
+                    INSERT OR REPLACE INTO gaze_summary 
+                    (meeting_id, user_id, total_events, total_away_time, focus_percentage, last_updated)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (meeting_id, user, total_events, away_events * 0.3, focus_percentage, datetime.datetime.now().isoformat()))
+            
+            conn.commit()
+        
+        # Generate AI detection data
+        with sqlite3.connect(AI_DB_PATH) as conn:
+            c = conn.cursor()
+            
+            features = ["deepfake", "liveness", "multiperson", "face_match", "bias", "audio_clarity"]
+            statuses = ["✅ Pass", "⚠️ Warning", "❌ Fail"]
+            
+            for user in test_users:
+                for feature in features:
+                    # Insert 3-5 checks per feature per user
+                    for i in range(random.randint(3, 5)):
+                        status = random.choice(statuses)
+                        c.execute("""
+                            INSERT INTO ai_results (meeting_id, user_id, feature, status)
+                            VALUES (?, ?, ?, ?)
+                        """, (meeting_id, user, feature, status))
+            
+            conn.commit()
+        
+        return jsonify({
+            "success": True, 
+            "message": f"Generated test data for meeting {meeting_id}",
+            "users_created": len(test_users),
+            "gaze_events_per_user": 50,
+            "ai_checks_per_user": len(features) * 4  # average
+        })
+        
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 # -------------------- Start --------------------
 if __name__=="__main__":
     socketio.run(app,host="0.0.0.0",port=5000,debug=True)
