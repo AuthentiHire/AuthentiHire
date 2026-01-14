@@ -30,9 +30,8 @@ AuthentiHire addresses these challenges by providing **real-time monitoring and 
 ## 🛠️ Tech Stack
 
 ### Backend & Frameworks
-- Flask  
-- Django  
-
+- Flask
+  
 ### AI / Machine Learning & Computer Vision
 - YOLO  
 - XceptionNet  
@@ -89,7 +88,7 @@ AuthentiHire addresses these challenges by providing **real-time monitoring and 
 - Prototype completed  
 - Continuous improvements in model accuracy and UI  
 
-**##Repository **
+## Repository
 - https://github.com/AuthentiHire/AuthentiHire
 
 
