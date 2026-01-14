@@ -34,6 +34,8 @@
       background-color: var(--light-bg);
       transition: background-color 0.3s ease;
       min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
     }
 
     body.dark-mode {
@@ -43,6 +45,112 @@
       --text-gray: #cbd5e1;
       --text-light: #94a3b8;
       --border-color: #334155;
+    }
+
+    /* Animated Background */
+    .stars-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+    }
+
+    body:not(.dark-mode) .star {
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.8) 0%, rgba(59, 130, 246, 0.5) 30%, rgba(96, 165, 250, 0.2) 60%, transparent 100%);
+      box-shadow: 0 0 20px rgba(37, 99, 235, 0.6), 0 0 40px rgba(59, 130, 246, 0.3);
+    }
+
+    body.dark-mode .star {
+      background: radial-gradient(circle, rgba(147, 197, 253, 1) 0%, rgba(96, 165, 250, 0.8) 30%, rgba(59, 130, 246, 0.4) 60%, transparent 100%);
+      box-shadow: 0 0 25px rgba(147, 197, 253, 0.8), 0 0 50px rgba(96, 165, 250, 0.5), 0 0 75px rgba(59, 130, 246, 0.3);
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) translateX(0) scale(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(100px) scale(1);
+        opacity: 0;
+      }
+    }
+
+    @keyframes floatAlt {
+      0% {
+        transform: translateY(100vh) translateX(0) scale(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      90% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(-100px) scale(1.2) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes floatSlow {
+      0% {
+        transform: translateY(100vh) translateX(50px) scale(0);
+        opacity: 0;
+      }
+      15% {
+        opacity: 0.6;
+      }
+      85% {
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(-50px) scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    /* Milky Way effect */
+    .milky-way {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.15;
+    }
+
+    body:not(.dark-mode) .milky-way {
+      background: 
+        radial-gradient(ellipse at 20% 50%, rgba(37, 99, 235, 0.25) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 30%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 70%, rgba(96, 165, 250, 0.15) 0%, transparent 50%);
+    }
+
+    body.dark-mode .milky-way {
+      background: 
+        radial-gradient(ellipse at 20% 50%, rgba(147, 197, 253, 0.35) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 30%, rgba(96, 165, 250, 0.25) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 70%, rgba(59, 130, 246, 0.2) 0%, transparent 50%);
+      opacity: 0.4;
     }
 
     /* Navbar */
@@ -133,6 +241,7 @@
       opacity: 0;
       transform: translateY(20px);
       animation: fadeInUp 0.6s ease forwards;
+      z-index: 1;
     }
 
     .auth-section h2 {
@@ -327,6 +436,10 @@
   </style>
 </head>
 <body>
+  <!-- Animated Background -->
+  <div class="milky-way"></div>
+  <div class="stars-container" id="starsContainer"></div>
+
   <header class="navbar">
     <div class="logo">AuthentiHire</div>
     <ul class="nav-links">
@@ -369,6 +482,42 @@
   </section>
 
   <script>
+    // Generate animated stars
+    function createStars() {
+      const container = document.getElementById('starsContainer');
+      const starCount = 150; // Increased to 150 particles
+
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        // Larger, more visible sizes
+        const size = Math.random() * 6 + 3;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.left = Math.random() * 100 + '%';
+        
+        // Randomize starting position throughout the entire screen
+        const startPosition = Math.random() * 200 - 50; // Can start from -50% to 150%
+        star.style.bottom = startPosition + '%';
+        
+        const duration = Math.random() * 20 + 10;
+        star.style.animationDuration = duration + 's';
+        
+        // NO DELAY - particles start immediately
+        star.style.animationDelay = '0s';
+        
+        const animations = ['float', 'floatAlt', 'floatSlow'];
+        star.style.animationName = animations[Math.floor(Math.random() * animations.length)];
+        star.style.animationIterationCount = 'infinite';
+        star.style.animationTimingFunction = 'ease-in-out';
+        
+        container.appendChild(star);
+      }
+    }
+
+    createStars();
+
     const signupForm = document.getElementById("signupForm");
     const sendOtpBtn = document.getElementById("sendOtpBtn");
 
