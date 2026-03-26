@@ -1,94 +1,321 @@
+# TRIVECTOR — AI-Powered Remote Interview Proctoring Platform
 
-#  AuthentiHire 
+<div align="center">
 
-AuthentiHire is an **AI-driven interview integrity and analytics platform** designed to ensure fairness, transparency, and authenticity in virtual interviews. It leverages **computer vision, audio processing, and deep learning** to detect suspicious behavior, deepfakes, and integrity violations during online interviews.
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-Web%20Framework-000000?style=for-the-badge&logo=flask&logoColor=white)
+![WebRTC](https://img.shields.io/badge/WebRTC-Live%20Video-333333?style=for-the-badge&logo=webrtc&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
 
----
+**A real-time AI proctoring system for remote interviews — combining WebRTC video, YOLOv8 object detection, MediaPipe gaze tracking, FER emotion recognition, DeepFace identity verification, and Librosa voice analysis into one seamless hiring pipeline.**
 
-## 📌 Problem Statement
-With the rapid adoption of remote hiring, organizations face challenges such as:
-- Candidate impersonation
-- Use of deepfake video and audio
-- Lack of behavioral monitoring
-- Difficulty ensuring unbiased and fair interviews
+[![YOLOv8](https://img.shields.io/badge/YOLOv8-Object%20Detection-FF6B35?style=flat-square)](https://ultralytics.com/)
+[![MediaPipe](https://img.shields.io/badge/MediaPipe-Gaze%20Tracking-00BFA5?style=flat-square)](https://mediapipe.dev/)
+[![DeepFace](https://img.shields.io/badge/DeepFace-Identity%20Verification-E53935?style=flat-square)](https://github.com/serengil/deepface)
+[![FER](https://img.shields.io/badge/FER-Emotion%20Recognition-7C4DFF?style=flat-square)](https://github.com/justinshenk/fer)
+[![Librosa](https://img.shields.io/badge/Librosa-Voice%20Analysis-43A047?style=flat-square)](https://librosa.org/)
+[![OpenCV](https://img.shields.io/badge/OpenCV-Frame%20Extraction-5C3EE8?style=flat-square)](https://opencv.org/)
 
-AuthentiHire addresses these challenges by providing **real-time monitoring and post-interview analytics**.
-
----
-
-##  Features
-- **Gaze Shift Detection** – Identifies abnormal eye movements indicating distractions or external assistance  
--  **Emotion Detection** – Analyzes facial expressions to detect emotional states during interviews  
-- **Multiple Person Detection** – Detects presence of more than one person in the video frame  
-- **Video Deepfake Detection** – Flags manipulated or synthetic video content  
-- **Audio Deepfake Detection** – Analyzes voice signals to detect synthetic or altered audio  
--  **Interview Analytics Report** – Generates detailed analytics using a unique meeting ID  
-- **Bias Reduction Support** – Helps promote fair and transparent interview evaluations  
+</div>
 
 ---
 
-## 🛠️ Tech Stack
+## 📌 Overview
 
-### Backend & Frameworks
-- Flask
-  
-### AI / Machine Learning & Computer Vision
-- YOLO  
-- XceptionNet  
-- DeepFace  
-- OpenCV  
+**TRIVECTOR** is a fully automated remote hiring platform that conducts live video interviews via WebRTC and simultaneously runs a multi-model AI surveillance pipeline. Every session is proctored in real time — detecting proxy candidates, monitoring gaze and attention, analyzing emotions and voice, and verifying identity — then compiled into a detailed analytical report linked to a unique Meeting ID.
 
-### Audio Processing
-- Librosa  
-
-### Data & Utilities
-- NumPy  
-- Pandas  
-- SQLite  
-
-### Frontend
-- HTML  
-- CSS  
-- JavaScript  
+> No plugins. No manual review. Just intelligent, trustworthy remote hiring.
 
 ---
 
-## System Workflow
-1. Candidate joins an interview session  
-2. Video and audio streams are captured  
-3. AI models analyze:
-   - Gaze patterns  
-   - Facial emotions  
-   - Presence of multiple people  
-   - Deepfake indicators  
-4. Audio is processed for deepfake detection  
-5. Analytics are generated and stored using a **meeting ID**  
-6. Recruiters receive a comprehensive integrity report  
+## ✨ Features
+
+| Feature | Details |
+|--------|---------|
+| 🎥 Live Video Interviews | WebRTC-based in-browser video calls — no setup needed |
+| 🧬 Identity Verification | DeepFace matches candidate against pre-registered profile photo |
+| 😤 Emotion Recognition | FER tracks 7 emotions across the full session timeline |
+| 👁️ Gaze Detection | `gaze_detector.py` + MediaPipe detects off-screen attention |
+| 🕵️ Multi-Person Detection | YOLOv8 (`yolov8n.pt`) flags unauthorized persons in frame |
+| 🎙️ Voice Analysis | Librosa detects stress, pace, and audio anomalies |
+| 📊 Post-Interview Report | AI signals aggregated by Meeting ID → `view_results.html` |
+| 🔐 Dual-Portal Access | Separate flows for candidates and clients (recruiters) |
+| 🗄️ Local Databases | `candidates.db` for profiles, `ai_results.db` for analysis data |
 
 ---
 
-## Output & Analytics
-- Integrity score  
-- Emotion timeline  
-- Gaze deviation metrics  
-- Deepfake confidence scores  
-- Multi-person detection alerts  
+## 🏗️ System Architecture
+
+```
+┌───────────────────────────────────────────────────────────────┐
+│                     CANDIDATE BROWSER                         │
+│              WebRTC Live Video  (meeting.html)                │
+└────────────────────────┬──────────────────────────────────────┘
+                         │  A/V Stream
+                         ▼
+┌───────────────────────────────────────────────────────────────┐
+│                      app.py  (Flask)                          │
+│                                                               │
+│   ┌─────────────────────────────────────────────────────┐     │
+│   │         OpenCV — Frame Extraction Engine            │     │
+│   └──────────┬──────────────────────────────────────────┘     │
+│              │  Frames dispatched in parallel                 │
+│    ┌─────────┼──────────┬─────────────┬───────────┐           │
+│    ▼         ▼          ▼             ▼           ▼           │
+│ ┌──────┐ ┌───────┐ ┌────────┐ ┌──────────┐ ┌──────────┐      │
+│ │ YOLO │ │Gaze   │ │  FER   │ │DeepFace  │ │ Librosa  │      │
+│ │v8n.pt│ │Detect.│ │Emotions│ │ Identity │ │  Audio   │      │
+│ └──┬───┘ └───┬───┘ └───┬────┘ └────┬─────┘ └────┬─────┘      │
+│    └─────────┴──────────┴───────────┴────────────┘            │
+│                         │                                     │
+│              ┌──────────▼──────────┐                          │
+│              │  Aggregation Engine │                          │
+│              │  (Meeting ID index) │                          │
+│              └──────────┬──────────┘                          │
+│                         │                                     │
+│         ┌───────────────▼──────────────────┐                  │
+│         │  ai_results.db  ←→  candidates.db│                  │
+│         └───────────────┬──────────────────┘                  │
+│                         │                                     │
+│              ┌──────────▼───────────┐                         │
+│              │   view_results.html  │  (Client Dashboard)     │
+│              └──────────────────────┘                         │
+└───────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-##  Use Cases
-- Online recruitment interviews  
-- Remote technical assessments  
-- Academic viva voce and evaluations  
-- Secure virtual meetings  
+## 📂 Project Structure
+
+```
+TRIVECTOR/
+│
+├── templates/                      # Jinja2 HTML templates (Flask)
+│   ├── homepg1.html                # Landing / home page
+│   ├── about.html                  # About the platform
+│   ├── contact.html                # Contact page
+│   │
+│   ├── candidatesignup.html        # Candidate registration
+│   ├── candidatelogin.html         # Candidate login
+│   ├── candidateportal.html        # Candidate dashboard
+│   ├── edit_profile.html           # Candidate profile editing
+│   ├── profile.html                # Candidate profile view
+│   │
+│   ├── clientsignup.html           # Recruiter/Client registration
+│   ├── clientlogin.html            # Recruiter/Client login
+│   ├── clientportal.html           # Recruiter dashboard
+│   │
+│   ├── meeting.html                # Live WebRTC interview room
+│   ├── analytics.html              # AI analytics dashboard
+│   └── view_results.html           # Post-interview report viewer
+│
+├── static/                         # CSS, JS, images, assets
+├── uploads/                        # Candidate uploaded media
+│   └── asritha_222/                # Per-candidate upload folders
+│
+├── app.py                          # Main Flask application & routes
+├── gaze_detector.py                # MediaPipe gaze tracking module
+├── list_videos.py                  # Utility: list recorded sessions
+│
+├── yolov8n.pt                      # YOLOv8 Nano pre-trained weights
+│
+├── candidates.db                   # SQLite: candidate profiles & auth
+├── ai_results.db                   # SQLite: per-session AI analysis data
+│
+├── requirements.txt                # Python dependencies
+├── venv/                           # Virtual environment
+└── __pycache__/                    # Python bytecode cache
+```
 
 ---
 
-## Project Status
-- Prototype completed  
-- Continuous improvements in model accuracy and UI  
+## 🤖 AI Models
 
-## Repository
-- https://github.com/AuthentiHire/AuthentiHire
+### 👁️ `gaze_detector.py` — Gaze & Attention Tracking
+- Built on **MediaPipe Face Mesh** with 468 facial landmarks
+- Computes iris position to determine gaze direction (left / right / up / down / center)
+- Calculates head yaw and pitch for off-screen attention detection
+- Raises flags when the candidate looks away for longer than a configurable threshold
 
+### 🕵️ YOLOv8 (`yolov8n.pt`) — Multi-Person & Object Detection
+- Lightweight YOLOv8 Nano model for real-time inference
+- Detects multiple persons → triggers proxy candidate alert
+- Identifies unauthorized objects: phones, earphones, printed notes
+- Every detection is timestamped and stored in `ai_results.db`
 
+### 😤 FER — Facial Emotion Recognition
+- Classifies 7 emotions: `Happy` `Sad` `Angry` `Fear` `Disgust` `Surprise` `Neutral`
+- Runs per-frame and builds an emotion timeline for the full session
+- Sudden stress spikes or inconsistency patterns are flagged as anomalies
+
+### 🧬 DeepFace — Identity Verification
+- Compares live frames against the candidate's pre-registered photo in `uploads/`
+- Supports multiple backends: `ArcFace`, `VGG-Face`, `Facenet512`
+- Identity mismatch beyond the configured threshold → flagged immediately
+
+### 🎙️ Librosa — Voice & Audio Analysis
+- Extracts **MFCCs**, pitch, spectral centroid, and zero-crossing rate
+- Detects speech stress, unnatural pauses, and anomalous tone shifts
+- Flags possible pre-recorded audio playback attempts
+
+---
+
+## 🔐 User Portals
+
+### 👤 Candidate Portal
+| Page | Purpose |
+|------|---------|
+| `candidatesignup.html` | Create account with photo upload |
+| `candidatelogin.html` | Authenticate and access dashboard |
+| `candidateportal.html` | View scheduled interviews, join meeting |
+| `edit_profile.html` | Update personal details and photo |
+| `profile.html` | View profile summary |
+| `meeting.html` | Live WebRTC interview room |
+
+### 🏢 Client / Recruiter Portal
+| Page | Purpose |
+|------|---------|
+| `clientsignup.html` | Recruiter registration |
+| `clientlogin.html` | Recruiter authentication |
+| `clientportal.html` | Manage candidates and schedule interviews |
+| `analytics.html` | Real-time and historical AI analytics |
+| `view_results.html` | Post-interview reports by Meeting ID |
+
+---
+
+## 🗄️ Database Schema
+
+### `candidates.db`
+```
+candidates
+├── id            INTEGER PRIMARY KEY
+├── name          TEXT
+├── email         TEXT UNIQUE
+├── password_hash TEXT
+├── photo_path    TEXT          ← used for DeepFace verification
+└── created_at    TIMESTAMP
+```
+
+### `ai_results.db`
+```
+results
+├── id             INTEGER PRIMARY KEY
+├── meeting_id     TEXT          ← links all AI signals to one session
+├── candidate_id   INTEGER
+├── timestamp      TIMESTAMP
+├── emotion        TEXT
+├── gaze_direction TEXT
+├── identity_match REAL
+├── person_count   INTEGER
+├── voice_score    REAL
+└── flags          TEXT          ← JSON array of anomaly events
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Python 3.10+
+- Webcam & Microphone
+- Modern browser with WebRTC support (Chrome / Edge recommended)
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/trivector.git
+cd trivector
+```
+
+### 2. Create a Virtual Environment
+
+```bash
+python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+```
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run the Application
+
+```bash
+python app.py
+```
+
+Visit `http://localhost:5000` in your browser.
+
+---
+
+## 📦 Key Dependencies
+
+```
+flask
+opencv-python
+mediapipe
+ultralytics          # YOLOv8
+deepface
+fer
+librosa
+torch
+numpy
+Pillow
+```
+
+> 💡 A CUDA-compatible GPU is strongly recommended for real-time multi-model inference.
+
+---
+
+## 📊 Post-Interview Report (`view_results.html`)
+
+Each report is uniquely indexed by **Meeting ID** and contains:
+
+- 🕐 **Session Timeline** — full chronological event log
+- 😤 **Emotion Distribution** — percentage breakdown across 7 emotions
+- 👁️ **Gaze Attention Score** — attention tracking over interview duration
+- 🧬 **Identity Match Score** — per-frame confidence with flagged drops
+- 🕵️ **Multi-Person Events** — timestamps of unauthorized presence
+- 🎙️ **Voice Anomaly Markers** — audio stress points with timestamps
+- 🚨 **Anomaly Summary** — all flagged events with severity levels
+- 📈 **Trust Score** — composite integrity score (0–100)
+
+---
+
+## 🔒 Privacy & Data Handling
+
+- All video communication is encrypted via **DTLS-SRTP** (WebRTC standard)
+- Candidate photos and session data are stored locally — never sent to third-party APIs
+- Upload folders are namespaced per candidate (`uploads/<candidate_id>/`)
+- Session data in `ai_results.db` can be purged post-review at admin discretion
+
+---
+
+## 🗺️ Roadmap
+
+- [ ] Whisper integration for real-time speech-to-text transcription
+- [ ] LLM-based answer quality scoring
+- [ ] Export reports as PDF
+- [ ] Live recruiter alert dashboard during interviews
+- [ ] Multi-interview scheduling calendar
+- [ ] Role-based admin panel
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+<div align="center">
+
+**Built with ❤️**
+
+*Secure hiring. Smart proctoring. Zero compromise.*
+
+⭐ Star this repo if you found it useful!
+
+</div>
