@@ -1,4 +1,4 @@
-# TRIVECTOR — AI-Powered Remote Interview Proctoring Platform
+# AuthentiHire — AI-Powered Remote Interview Proctoring Platform
 
 <div align="center">
 
